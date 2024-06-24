@@ -12,6 +12,8 @@ public class ScoreManager : MonoBehaviour
     private float comboTimer = 0f;
     public float comboDuration = 2f; // Duration to keep the combo active
 
+    public GameOverZoneScaler gameOverZoneScaler;
+
     void Awake()
     {
         if (instance == null)
@@ -76,6 +78,11 @@ public class ScoreManager : MonoBehaviour
         comboCount++;
         comboTimer = 0f; // Reset the combo timer
         UpdateComboText();
+
+        if (gameOverZoneScaler != null)
+        {
+            gameOverZoneScaler.SetScale(score);
+        }
     }
 
     void ResetCombo()

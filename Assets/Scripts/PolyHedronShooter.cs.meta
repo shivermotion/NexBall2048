@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: a28108aeb3fe051468423d50a53b2c5e
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - polyhedronPrefab: {instanceID: 0}
+  - shootPoint: {instanceID: 0}
+  - arrowPrefab: {fileID: 4447701960781706649, guid: 27661a3ea4b619a45b23ad43d8680d54, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

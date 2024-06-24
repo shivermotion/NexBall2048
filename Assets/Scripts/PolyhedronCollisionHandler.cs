@@ -96,27 +96,39 @@ public class PolyhedronCollisionHandler : MonoBehaviour
         otherPolyhedron.GetComponent<Rigidbody>().AddForce(collisionNormal * strikeForce, ForceMode.Impulse);
     }
 
-    IEnumerator MergePolyhedrons(Vector3 collisionPoint, int newValue, PolyhedronCollisionHandler otherPolyhedron)
+  IEnumerator MergePolyhedrons(Vector3 collisionPoint, int newValue, PolyhedronCollisionHandler otherPolyhedron)
+{
+    // Add visual effect for merging (optional)
+    yield return new WaitForSeconds(0.1f); // Short delay to ensure proper merging
+
+    // Instantiate the shattered glass effect
+    GameObject shatteredGlass = Instantiate(shooter.shatteredGlassPrefab, collisionPoint, Quaternion.identity);
+    ParticleSystem particleSystem = shatteredGlass.GetComponent<ParticleSystem>();
+    if (particleSystem != null)
     {
-        // Add visual effect for merging (optional)
-        yield return new WaitForSeconds(0.1f); // Short delay to ensure proper merging
-
-        // Add score
-        ScoreManager.instance.AddScore(newValue);
-
-        // Create the new polyhedron
-        GameObject newPolyhedron = shooter.CreatePolyhedron(collisionPoint, newValue);
-
-        // Apply outward force to the new polyhedron
-        ApplyOutwardForce(newPolyhedron);
-
-        // Destroy the two original polyhedrons
-        Destroy(gameObject);
-        Destroy(otherPolyhedron.gameObject);
-
-        // Log the creation of the new polyhedron
-        Debug.Log($"New polyhedron with value {newValue} created at position {collisionPoint}");
+        particleSystem.Play();
     }
+
+    // Add score
+    ScoreManager.instance.AddScore(newValue);
+
+    // Create the new polyhedron
+    GameObject newPolyhedron = shooter.CreatePolyhedron(collisionPoint, newValue);
+
+    // Apply outward force to the new polyhedron
+    ApplyOutwardForce(newPolyhedron);
+
+    // Destroy the two original polyhedrons
+    Destroy(gameObject);
+    Destroy(otherPolyhedron.gameObject);
+
+    // Log the creation of the new polyhedron
+    Debug.Log($"New polyhedron with value {newValue} created at position {collisionPoint}");
+
+    // Destroy the particle system after it finishes
+    Destroy(shatteredGlass, particleSystem.main.duration);
+}
+
 
     void ApplyOutwardForce(GameObject polyhedron)
     {
