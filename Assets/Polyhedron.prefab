@@ -426,7 +426,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 13a2b7fb5b5a2404db031266ab9b9e05, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 36d687cfa328ffe46b5c59990b3955df, type: 2}
+      objectReference: {fileID: 2100000, guid: 908f77777c272234eb1b9f117cda326c, type: 2}
     - target: {fileID: 919132149155446097, guid: 13a2b7fb5b5a2404db031266ab9b9e05, type: 3}
       propertyPath: m_Name
       value: Polyhedron
@@ -497,7 +497,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
@@ -520,10 +520,14 @@ MonoBehaviour:
   frontFace: {fileID: 1082730499860182960}
   backFace: {fileID: 3470343355922258461}
   magnetismStrength: 25
-  stickinessStrength: 0.5
+  stickinessStrength: 5
   stickinessRange: 5
   strikeForce: 10
   outwardForceStrength: 5
+  stayTime: 0
+  recognitionDelay: 2
+  recentlyShot: 1
+  shotTimer: 0
 --- !u!4 &6620983757099970435 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 13a2b7fb5b5a2404db031266ab9b9e05, type: 3}
