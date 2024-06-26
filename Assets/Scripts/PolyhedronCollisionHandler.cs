@@ -115,6 +115,9 @@ public class PolyhedronCollisionHandler : MonoBehaviour
     // Create the new polyhedron
     GameObject newPolyhedron = shooter.CreatePolyhedron(collisionPoint, newValue);
 
+    // Enable the mesh collider for the new polyhedron
+    newPolyhedron.GetComponent<MeshCollider>().enabled = true;
+
     // Apply outward force to the new polyhedron
     ApplyOutwardForce(newPolyhedron);
 

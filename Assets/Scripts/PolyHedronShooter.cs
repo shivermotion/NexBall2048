@@ -41,30 +41,31 @@ public class PolyhedronShooter : MonoBehaviour
         { 512, new Color(0.75f, 1f, 0f) }, // Lime
         { 1024, new Color(0f, 0.75f, 1f) }, // Sky Blue
         { 2048, new Color(1f, 0f, 0.75f) },  // Pink
-        { 4096, new Color(0f, 1f, 0.75f) },  // Bright Turquoise
-        { 8192, new Color(1f, 0.6f, 0.2f) },  // Bright Orange
-        { 16384, new Color(0.6f, 0f, 0.8f) },  // Bright Purple
-        { 32768, new Color(0.1f, 1f, 0.2f) },  // Bright Green
-        { 65536, new Color(1f, 0.2f, 0.6f) },  // Bright Pink
-        { 131072, new Color(0.1f, 0.8f, 0.9f) },  // Bright Cyan
-        { 262144, new Color(1f, 0.1f, 0.1f) },  // Bright Red
-        { 524288, new Color(1f, 1f, 0.1f) },  // Bright Yellow
-        { 1048576, new Color(0.1f, 0.1f, 1f) },  // Bright Blue
-        { 2097152, new Color(0.6f, 0.1f, 1f) },  // Bright Violet
-        { 4194304, new Color(0f, 1f, 1f) },  // Bright Teal
-        { 8388608, new Color(1f, 0.4f, 0.1f) },  // Bright Orange-Red
-        { 16777216, new Color(0.7f, 1f, 0.2f) },  // Bright Lime
-        { 33554432, new Color(0.3f, 0.1f, 0.8f) },  // Bright Indigo
-        { 67108864, new Color(0.2f, 1f, 0.9f) }  // Bright Aqua
+        // { 4096, new Color(0f, 1f, 0.75f) },  // Bright Turquoise
+        // { 8192, new Color(1f, 0.6f, 0.2f) },  // Bright Orange
+        // { 16384, new Color(0.6f, 0f, 0.8f) },  // Bright Purple
+        // { 32768, new Color(0.1f, 1f, 0.2f) },  // Bright Green
+        // { 65536, new Color(1f, 0.2f, 0.6f) },  // Bright Pink
+        // { 131072, new Color(0.1f, 0.8f, 0.9f) },  // Bright Cyan
+        // { 262144, new Color(1f, 0.1f, 0.1f) },  // Bright Red
+        // { 524288, new Color(1f, 1f, 0.1f) },  // Bright Yellow
+        // { 1048576, new Color(0.1f, 0.1f, 1f) },  // Bright Blue
+        // { 2097152, new Color(0.6f, 0.1f, 1f) },  // Bright Violet
+        // { 4194304, new Color(0f, 1f, 1f) },  // Bright Teal
+        // { 8388608, new Color(1f, 0.4f, 0.1f) },  // Bright Orange-Red
+        // { 16777216, new Color(0.7f, 1f, 0.2f) },  // Bright Lime
+        // { 33554432, new Color(0.3f, 0.1f, 0.8f) },  // Bright Indigo
+        // { 67108864, new Color(0.2f, 1f, 0.9f) }  // Bright Aqua
         // Add more values and colors as needed
     };
 
   private List<int> possibleValues = new List<int>()
     {
-        2, 4, 8, 16, 32, 64, 
-        128, 256, 512, 1024, 2048, 4096, 8192, 16384,
-        32768, 65536, 131072, 262144, 524288, 1048576, 2097152, 4194304,
-        8388608, 16777216, 33554432, 67108864
+        2, 4, 8, 16, 32, 64,
+        128, 256, 512, 1024, 2048,
+        //  4096, 8192, 16384,
+        // 32768, 65536, 131072, 262144, 524288, 1048576, 2097152, 4194304,
+        // 8388608, 16777216, 33554432, 67108864
     }; // Add more values as needed
 
   void Start()
@@ -132,7 +133,7 @@ public class PolyhedronShooter : MonoBehaviour
     float scaleFactor = baseSize + (index * 0.1f);
 
     // Adjust the shoot point position to ensure it spawns above the plane
-    shootPoint.position = new Vector3(shootPoint.position.x, scaleFactor, shootPoint.position.z);
+    shootPoint.position = new Vector3(shootPoint.position.x, scaleFactor + 0.2f, shootPoint.position.z);
 
     // Instantiate the polyhedron
     Vector3 offsetPosition = shootPoint.position - new Vector3(0, 0, 1); // Slightly behind the shoot point
@@ -261,8 +262,10 @@ public class PolyhedronShooter : MonoBehaviour
       Rigidbody rb = previewPolyhedron.GetComponent<Rigidbody>();
       if (rb != null)
       {
+        previewPolyhedron.GetComponent<MeshCollider>().enabled = true;
         rb.isKinematic = false; // Reactivate physics
         Vector3 force = Vector3.forward * shootForce;
+        rb.velocity = Vector3.zero; // Reset velocity
         rb.AddForce(force, ForceMode.Impulse);
         Debug.Log("Force applied to Polyhedron: " + force);
 
