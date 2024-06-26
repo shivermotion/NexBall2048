@@ -4,97 +4,100 @@ using System.Collections.Generic;
 
 public class GameOverZone : MonoBehaviour
 {
+    private bool prepareToGameOver = false;
+    private Coroutine gameOverCountdownCoroutine;
+    private HashSet<PolyhedronCollisionHandler> polyhedronsInZone = new HashSet<PolyhedronCollisionHandler>();
 
-
-  private bool prepareToGameOver = false;
-  private Coroutine gameOverCountdownCoroutine;
-  private HashSet<PolyhedronCollisionHandler> polyhedronsInZone = new HashSet<PolyhedronCollisionHandler>();
-  private void OnTriggerEnter(Collider other)
-  {
-    Debug.Log("Game Over Zone Triggered");
-    PolyhedronCollisionHandler polyhedron = other.GetComponent<PolyhedronCollisionHandler>();
-    if (polyhedron != null)
+    private void OnTriggerEnter(Collider other)
     {
-      polyhedronsInZone.Add(polyhedron);
-      Debug.Log($"Polyhedron with value {polyhedron.value} entered Game Over Zone. Starting countdown.");
-    }
-  }
-
-
-  void Update()
-  {
-
-    if (polyhedronsInZone.Count > 0 && !prepareToGameOver)
-    {
-
-      foreach (PolyhedronCollisionHandler polyhedron in polyhedronsInZone)
-      {
-        if (polyhedron.recentlyShot)
+        Debug.Log("Game Over Zone Triggered");
+        PolyhedronCollisionHandler polyhedron = other.GetComponent<PolyhedronCollisionHandler>();
+        if (polyhedron != null)
         {
-          continue;
+            polyhedronsInZone.Add(polyhedron);
+            Debug.Log($"Polyhedron with value {polyhedron.value} entered Game Over Zone. Starting countdown.");
         }
-        if (gameOverCountdownCoroutine == null)
-        {
-
-          prepareToGameOver = true;
-          gameOverCountdownCoroutine = StartCoroutine(StartGameOverCountdown(polyhedron));
-
-        }
-        break;
-      }
-
     }
-    else if (polyhedronsInZone.Count == 0 && prepareToGameOver)
+
+    void Update()
     {
-      if (gameOverCountdownCoroutine != null)
-      {
-        StopCoroutine(gameOverCountdownCoroutine);
-        prepareToGameOver = false;
-        gameOverCountdownCoroutine = null;
-      }
-    }
-  }
-  private void OnTriggerExit(Collider other)
-  {
-    PolyhedronCollisionHandler polyhedron = other.GetComponent<PolyhedronCollisionHandler>();
-    if (polyhedron != null)
-    {
-      polyhedronsInZone.Remove(polyhedron);
-      Debug.Log($"Polyhedron with value {polyhedron.value} exited Game Over Zone. Stopping countdown.");
-      foreach (PolyhedronCollisionHandler poly in polyhedronsInZone)
-      {
-        if (!poly.recentlyShot)
+        // Trigger game over for dev testing when 'G' key is pressed
+        if (Input.GetKeyDown(KeyCode.G))
         {
-          return;
+            TriggerGameOver();
         }
 
-      }
-      if (gameOverCountdownCoroutine != null)
-      {
-        StopCoroutine(gameOverCountdownCoroutine);
-        prepareToGameOver = false;
-        gameOverCountdownCoroutine = null;
-      }
-
+        if (polyhedronsInZone.Count > 0 && !prepareToGameOver)
+        {
+            foreach (PolyhedronCollisionHandler polyhedron in polyhedronsInZone)
+            {
+                if (polyhedron.recentlyShot)
+                {
+                    continue;
+                }
+                if (gameOverCountdownCoroutine == null)
+                {
+                    prepareToGameOver = true;
+                    gameOverCountdownCoroutine = StartCoroutine(StartGameOverCountdown(polyhedron));
+                }
+                break;
+            }
+        }
+        else if (polyhedronsInZone.Count == 0 && prepareToGameOver)
+        {
+            if (gameOverCountdownCoroutine != null)
+            {
+                StopCoroutine(gameOverCountdownCoroutine);
+                prepareToGameOver = false;
+                gameOverCountdownCoroutine = null;
+            }
+        }
     }
 
-  }
-
-  private IEnumerator StartGameOverCountdown(PolyhedronCollisionHandler polyhedron)
-  {
-    Debug.Log($"Starting Game Over countdown for polyhedron with value {polyhedron.value}");
-    for (int i = 10; i > 0; i--)
+    private void OnTriggerExit(Collider other)
     {
-      Debug.Log($"Game Over countdown for polyhedron with value {polyhedron.value}: {i}");
-      yield return new WaitForSeconds(1);
+        PolyhedronCollisionHandler polyhedron = other.GetComponent<PolyhedronCollisionHandler>();
+        if (polyhedron != null)
+        {
+            polyhedronsInZone.Remove(polyhedron);
+            Debug.Log($"Polyhedron with value {polyhedron.value} exited Game Over Zone. Stopping countdown.");
+            foreach (PolyhedronCollisionHandler poly in polyhedronsInZone)
+            {
+                if (!poly.recentlyShot)
+                {
+                    return;
+                }
+            }
+            if (gameOverCountdownCoroutine != null)
+            {
+                StopCoroutine(gameOverCountdownCoroutine);
+                prepareToGameOver = false;
+                gameOverCountdownCoroutine = null;
+            }
+        }
     }
 
-    // Game over logic
-    if (polyhedron != null)
+    private IEnumerator StartGameOverCountdown(PolyhedronCollisionHandler polyhedron)
     {
-      GameManager.instance.GameOver();
-      Debug.Log($"Polyhedron with value {polyhedron.value} triggered Game Over.");
-      // Add your game over logic here
+        Debug.Log($"Starting Game Over countdown for polyhedron with value {polyhedron.value}");
+        for (int i = 10; i > 0; i--)
+        {
+            Debug.Log($"Game Over countdown for polyhedron with value {polyhedron.value}: {i}");
+            yield return new WaitForSeconds(1);
+        }
+
+        // Game over logic
+        if (polyhedron != null)
+        {
+            GameManager.instance.GameOver();
+            Debug.Log($"Polyhedron with value {polyhedron.value} triggered Game Over.");
+            // Add your game over logic here
+        }
     }
-  }
+
+    private void TriggerGameOver()
+    {
+        Debug.Log("Dev key pressed: Triggering Game Over");
+        GameManager.instance.GameOver();
+    }
 }

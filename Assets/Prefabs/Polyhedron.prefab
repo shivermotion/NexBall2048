@@ -520,7 +520,7 @@ MonoBehaviour:
   frontFace: {fileID: 1082730499860182960}
   backFace: {fileID: 3470343355922258461}
   magnetismStrength: 25
-  stickinessStrength: 5
+  stickinessStrength: 10
   stickinessRange: 5
   strikeForce: 10
   outwardForceStrength: 5

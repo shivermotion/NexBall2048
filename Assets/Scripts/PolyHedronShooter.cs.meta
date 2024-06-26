@@ -7,6 +7,8 @@ MonoImporter:
   - polyhedronPrefab: {instanceID: 0}
   - shootPoint: {instanceID: 0}
   - arrowPrefab: {fileID: 4447701960781706649, guid: 27661a3ea4b619a45b23ad43d8680d54, type: 3}
+  - shatteredGlassPrefab: {instanceID: 0}
+  - comboTextPrefab: {fileID: 7454235686080862838, guid: a40ae191f5d57374e957f639ea49fd7c, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
