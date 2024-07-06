@@ -115,4 +115,13 @@ public class GameManager : MonoBehaviour
         // Implement music toggle logic here
         Debug.Log("Music: " + musicToggle.isOn);
     }
+
+    // Method to close the settings menu and return to the game
+    public void BackToGame()
+    {
+        isPaused = false;
+        settingsModal.SetActive(false);
+        Time.timeScale = 1f; // Resume the game
+        Debug.Log("Back to Game");
+    }
 }
