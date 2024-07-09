@@ -224,6 +224,13 @@ public class PolyhedronShooter : MonoBehaviour
     collisionHandler.recentlyShot = true; // Set as recently shot
     collisionHandler.shotTimer = 0f; // Reset shot timer
 
+    // Check if the value is 2048 or higher
+    if (value >= 2048)
+    {
+        GameManager.instance.IncrementBombCounter();
+        Debug.Log($"Polyhedron with value {value} created. Incrementing bomb counter.");
+    }
+
     return newPolyhedron;
   }
 

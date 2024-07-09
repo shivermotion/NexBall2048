@@ -15,6 +15,9 @@ public class GameManager : MonoBehaviour
     public Toggle soundToggle;
     public Toggle musicToggle;
 
+    public TextMeshProUGUI bombCounterText; 
+    private int bombCounter = 0; 
+
     private bool isPaused = false;
 
     void Awake()
@@ -43,6 +46,10 @@ public class GameManager : MonoBehaviour
         if (settingsModal != null)
         {
             settingsModal.SetActive(false); // Ensure the modal is initially hidden
+        }
+         if (bombCounterText != null)
+        {
+            bombCounterText.text = "Bombs: " + bombCounter.ToString();
         }
         Debug.Log("GameManager Start called");
     }
@@ -114,6 +121,15 @@ public class GameManager : MonoBehaviour
     {
         // Implement music toggle logic here
         Debug.Log("Music: " + musicToggle.isOn);
+    }
+     public void IncrementBombCounter()
+    {
+        bombCounter++;
+        if (bombCounterText != null)
+        {
+            bombCounterText.text = "Bombs: " + bombCounter.ToString();
+        }
+        Debug.Log("Bomb counter incremented. Current bomb count: " + bombCounter);
     }
 
     // Method to close the settings menu and return to the game
