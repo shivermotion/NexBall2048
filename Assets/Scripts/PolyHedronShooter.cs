@@ -311,4 +311,15 @@ public class PolyhedronShooter : MonoBehaviour
 
     polyhedron.transform.localScale = originalScaleVector; // Reset to original scale
   }
+
+  public void SpawnBomb(GameObject bombPrefab)
+    {
+        if (previewPolyhedron != null)
+        {
+            Destroy(previewPolyhedron);
+        }
+
+        previewPolyhedron = Instantiate(bombPrefab, shootPoint.position, Quaternion.identity);
+        Debug.Log("Bomb spawned on the shoot point.");
+    }
 }

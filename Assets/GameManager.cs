@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     public Toggle musicToggle;
 
     public TextMeshProUGUI bombCounterText; 
+     public Button bombButton; 
+    public GameObject bombPrefab; 
     private int bombCounter = 0; 
 
     private bool isPaused = false;
@@ -49,7 +51,11 @@ public class GameManager : MonoBehaviour
         }
          if (bombCounterText != null)
         {
-            bombCounterText.text = "Bombs: " + bombCounter.ToString();
+            bombCounterText.text = bombCounter.ToString();
+        }
+        if (bombButton != null)
+        {
+            bombButton.onClick.AddListener(UseBomb);
         }
         Debug.Log("GameManager Start called");
     }
@@ -127,9 +133,33 @@ public class GameManager : MonoBehaviour
         bombCounter++;
         if (bombCounterText != null)
         {
-            bombCounterText.text = "Bombs: " + bombCounter.ToString();
+            bombCounterText.text = bombCounter.ToString();
         }
         Debug.Log("Bomb counter incremented. Current bomb count: " + bombCounter);
+    }
+
+    public void UseBomb()
+    {
+        if (bombCounter > 0)
+        {
+            bombCounter--;
+            if (bombCounterText != null)
+            {
+                bombCounterText.text = bombCounter.ToString();
+            }
+            Debug.Log("Bomb used. Current bomb count: " + bombCounter);
+
+            // Notify PolyhedronShooter to spawn a bomb
+            PolyhedronShooter shooter = FindObjectOfType<PolyhedronShooter>();
+            if (shooter != null)
+            {
+                shooter.SpawnBomb(bombPrefab);
+            }
+        }
+        else
+        {
+            Debug.Log("No bombs available.");
+        }
     }
 
     // Method to close the settings menu and return to the game
