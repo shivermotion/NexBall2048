@@ -1,12 +1,14 @@
 using UnityEngine;
 using TMPro;
+// using System.Numerics;
+
+
 
 public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager instance;
 
     public TextMeshProUGUI scoreText;
-    public TextMeshProUGUI comboText;
     public TextMeshProUGUI highScoreText; // Add a reference for the high score text
     private int score = 0;
     private int highScore = 0; // Variable to store the high score
@@ -31,7 +33,7 @@ public class ScoreManager : MonoBehaviour
 
     void Start()
     {
-        if (scoreText == null || comboText == null || highScoreText == null)
+        if (scoreText == null || highScoreText == null)
         {
             Debug.LogError("ScoreText, ComboText, or HighScoreText is not assigned in the inspector.");
             enabled = false; // Disable the script to prevent further errors
@@ -42,7 +44,7 @@ public class ScoreManager : MonoBehaviour
         highScore = PlayerPrefs.GetInt("HighScore", 0);
 
         UpdateScoreText();
-        UpdateComboText();
+        UpdateComboText(Vector3.zero);
         UpdateHighScoreText();
     }
 
@@ -71,7 +73,7 @@ public class ScoreManager : MonoBehaviour
 }
 
 
-    public void AddScore(int value)
+    public void AddScore(int value, Vector3 position)
     {
         if (value < 0)
         {
@@ -112,7 +114,7 @@ public class ScoreManager : MonoBehaviour
         comboCount++;
         comboTimer = 0f; // Reset the combo timer
         Debug.Log($"Combo triggered. Combo count: {comboCount}"); // Debug log for combo trigger
-        UpdateComboText();
+         UpdateComboText(position);
 
         if (gameOverZoneScaler != null)
         {
@@ -132,7 +134,7 @@ public class ScoreManager : MonoBehaviour
         comboCount = 0;
         comboTimer = 0f;
         Debug.Log("Combo reset."); // Debug log for combo reset
-        UpdateComboText();
+        UpdateComboText(Vector3.zero);
     }
 
     void UpdateScoreText()
@@ -147,16 +149,18 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    void UpdateComboText()
+    void UpdateComboText(Vector3 position)
     {
-        if (comboText != null)
-        {
-            comboText.text = comboCount > 1 ? "Combo: x" + comboCount : "";
-        }
-        else
-        {
-            Debug.LogWarning("ComboText is not assigned.");
-        }
+        // if (comboText != null)
+        // {
+        //     comboText.text = comboCount > 1 ? "Combo: x" + comboCount : "";
+        // }
+        // else
+        // {
+        //     Debug.LogWarning("ComboText is not assigned.");
+        // }
+
+        ComboCounterText.instance.SpawnComboText(position, comboCount);
     }
 
     void UpdateHighScoreText()

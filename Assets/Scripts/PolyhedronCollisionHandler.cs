@@ -110,7 +110,7 @@ public class PolyhedronCollisionHandler : MonoBehaviour
     }
 
     // Add score
-    ScoreManager.instance.AddScore(newValue);
+    ScoreManager.instance.AddScore(newValue, collisionPoint);
 
     // Create the new polyhedron
     GameObject newPolyhedron = shooter.CreatePolyhedron(collisionPoint, newValue);

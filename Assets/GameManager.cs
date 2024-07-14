@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,12 +16,13 @@ public class GameManager : MonoBehaviour
     public Toggle soundToggle;
     public Toggle musicToggle;
 
-    public TextMeshProUGUI bombCounterText; 
-     public Button bombButton; 
-    public GameObject bombPrefab; 
-    private int bombCounter = 0; 
+    public TextMeshProUGUI bombCounterText;
+    public Button bombButton;
+    public GameObject bombPrefab;
+    private int bombCounter = 0;
 
     private bool isPaused = false;
+    private Coroutine shakeCoroutine; // Reference to the shake coroutine
 
     void Awake()
     {
@@ -49,7 +51,7 @@ public class GameManager : MonoBehaviour
         {
             settingsModal.SetActive(false); // Ensure the modal is initially hidden
         }
-         if (bombCounterText != null)
+        if (bombCounterText != null)
         {
             bombCounterText.text = bombCounter.ToString();
         }
@@ -90,7 +92,7 @@ public class GameManager : MonoBehaviour
     public void ToggleSettings()
     {
         isPaused = !isPaused;
-        Debug.Log("ToggleSettings called. isPaused: " + isPaused); 
+        Debug.Log("ToggleSettings called. isPaused: " + isPaused);
 
         if (settingsModal == null)
         {
@@ -99,7 +101,7 @@ public class GameManager : MonoBehaviour
         }
 
         settingsModal.SetActive(isPaused);
-        Debug.Log("Settings Modal set to: " + isPaused); 
+        Debug.Log("Settings Modal set to: " + isPaused);
 
         if (isPaused)
         {
@@ -128,7 +130,8 @@ public class GameManager : MonoBehaviour
         // Implement music toggle logic here
         Debug.Log("Music: " + musicToggle.isOn);
     }
-     public void IncrementBombCounter()
+
+    public void IncrementBombCounter()
     {
         bombCounter++;
         if (bombCounterText != null)
@@ -159,6 +162,12 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("No bombs available.");
+
+            // Start the shake effect if there are no bombs left
+            if (shakeCoroutine == null)
+            {
+                shakeCoroutine = StartCoroutine(ShakeButton(bombButton.transform));
+            }
         }
     }
 
@@ -169,5 +178,28 @@ public class GameManager : MonoBehaviour
         settingsModal.SetActive(false);
         Time.timeScale = 1f; // Resume the game
         Debug.Log("Back to Game");
+    }
+
+    private IEnumerator ShakeButton(Transform buttonTransform)
+    {
+        Vector3 originalPosition = buttonTransform.localPosition;
+        float shakeDuration = 0.5f; // Duration of the shake
+        float shakeMagnitude = 5f; // Magnitude of the shake
+        float elapsed = 0.0f;
+
+        while (elapsed < shakeDuration)
+        {
+            float x = Random.Range(-1f, 1f) * shakeMagnitude;
+            float y = Random.Range(-1f, 1f) * shakeMagnitude;
+
+            buttonTransform.localPosition = new Vector3(originalPosition.x + x, originalPosition.y + y, originalPosition.z);
+
+            elapsed += Time.deltaTime;
+
+            yield return null;
+        }
+
+        buttonTransform.localPosition = originalPosition; // Reset to original position
+        shakeCoroutine = null; // Reset the coroutine reference
     }
 }
