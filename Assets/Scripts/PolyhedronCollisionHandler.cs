@@ -121,6 +121,9 @@ public class PolyhedronCollisionHandler : MonoBehaviour
     // Apply outward force to the new polyhedron
     ApplyOutwardForce(newPolyhedron);
 
+    // Notify the GameManager about the new polyhedron value
+        GameManager.instance.IncrementPolyhedronCount(newValue);
+
     // Destroy the two original polyhedrons
     Destroy(gameObject);
     Destroy(otherPolyhedron.gameObject);
