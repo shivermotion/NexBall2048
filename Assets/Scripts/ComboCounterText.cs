@@ -9,14 +9,23 @@ public class ComboCounterText : MonoBehaviour
 {
   public static ComboCounterText instance;
   public TextMeshProUGUI comboTextTemplate;
-void OnEnable(){
-  instance = this;
-}
+  void OnEnable()
+  {
+    instance = this;
+  }
   public void SpawnComboText(Vector3 position, int comboCount)
   {
-    TextMeshProUGUI comboText = Instantiate(comboTextTemplate, position, Quaternion.identity);
+    if(comboCount < 2)
+    {
+      return;
+    }
+    Vector3 ScreenPoint = Camera.main.WorldToScreenPoint(position);
+    TextMeshProUGUI comboText = Instantiate(comboTextTemplate, transform);
+    comboText.transform.position = ScreenPoint;
+    
     comboText.gameObject.SetActive(true);
     comboText.text = "Combo x" + comboCount;
     Destroy(comboText.gameObject, 10f);
+    
   }
 }
