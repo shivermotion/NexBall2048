@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 {
   public static GameManager instance;
 
-public GameObject gameOverPanel; // Game Over panel to display
+  public GameObject gameOverPanel; // Game Over panel to display
 
   public TextMeshProUGUI gameOverText;
   public TextMeshProUGUI restartText;
@@ -24,7 +24,7 @@ public GameObject gameOverPanel; // Game Over panel to display
   public GameObject bombPrefab;
   private int bombCounter = 0;
   private Dictionary<int, int> polyhedronCounts; // Dictionary to keep track of polyhedron counts
-public TextMeshProUGUI polyhedronCountsText; // Text component to display the counts
+  public TextMeshProUGUI polyhedronCountsText; // Text component to display the counts
 
   private bool isPaused = false;
   private Coroutine shakeCoroutine; // Reference to the shake coroutine
@@ -44,14 +44,11 @@ public TextMeshProUGUI polyhedronCountsText; // Text component to display the co
 
   void Start()
   {
-    polyhedronCounts = new Dictionary<int, int>();
-    if (gameOverText != null)
+    polyhedronCounts = new Dictionary<int, int>(); // Initialize the dictionary
+
+    if (gameOverPanel != null)
     {
-      gameOverText.gameObject.SetActive(false);
-    }
-    if (restartText != null)
-    {
-      restartText.gameObject.SetActive(false);
+      gameOverPanel.SetActive(false); // Ensure the panel is initially hidden
     }
     if (settingsModal != null)
     {
@@ -70,34 +67,41 @@ public TextMeshProUGUI polyhedronCountsText; // Text component to display the co
 
   void Update()
   {
+    // Check if the "R" key is pressed to restart the game when it is paused
     if (Time.timeScale == 0f && Input.GetKeyDown(KeyCode.R))
     {
       RestartGame();
     }
+
+    // Check if the "G" key is pressed to trigger the game over sequence
+    if (Input.GetKeyDown(KeyCode.G))
+    {
+      GameOver();
+    }
   }
 
-  public void GameOver()
-    {
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(true); // Show the game over panel
-        }
-        if (gameOverText != null)
-        {
-            gameOverText.gameObject.SetActive(true);
-        }
-        if (restartText != null)
-        {
-            restartText.gameObject.SetActive(true);
-        }
-        if (polyhedronCountsText != null)
-        {
-            polyhedronCountsText.gameObject.SetActive(true);
-            DisplayPolyhedronCounts(); // Display the counts on the game over screen
-        }
-        Time.timeScale = 0f; // Pause the game
-    }
 
+  public void GameOver()
+  {
+    if (gameOverPanel != null)
+    {
+      gameOverPanel.SetActive(true); // Show the game over panel
+    }
+    if (gameOverText != null)
+    {
+      gameOverText.gameObject.SetActive(true);
+    }
+    if (restartText != null)
+    {
+      restartText.gameObject.SetActive(true);
+    }
+    if (polyhedronCountsText != null)
+    {
+      polyhedronCountsText.gameObject.SetActive(true);
+      DisplayPolyhedronCounts(); // Display the counts on the game over screen
+    }
+    Time.timeScale = 0f; // Pause the game
+  }
   public void RestartGame()
   {
     Time.timeScale = 1f; // Unpause the game
@@ -200,7 +204,7 @@ public TextMeshProUGUI polyhedronCountsText; // Text component to display the co
   }
 
   private void DisplayPolyhedronCounts()
-{
+  {
     if (polyhedronCountsText == null) return;
 
     // Clear previous text
@@ -208,9 +212,9 @@ public TextMeshProUGUI polyhedronCountsText; // Text component to display the co
 
     foreach (var entry in polyhedronCounts)
     {
-        polyhedronCountsText.text += $"Value: {entry.Key}, Count: {entry.Value}\n";
+      polyhedronCountsText.text += $"{entry.Key} : {entry.Value}\n";
     }
-}
+  }
 
 
   // Method to close the settings menu and return to the game
