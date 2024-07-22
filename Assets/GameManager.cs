@@ -15,6 +15,9 @@ public class GameManager : MonoBehaviour
   public TextMeshProUGUI restartText;
   public GameObject settingsModal;
 
+  public GameObject dailyChallengesPanel;
+  public GameObject rewardsShop;
+
   public Toggle vibrationToggle;
   public Toggle soundToggle;
   public Toggle musicToggle;
@@ -62,6 +65,14 @@ public class GameManager : MonoBehaviour
     {
       bombButton.onClick.AddListener(UseBomb);
     }
+     if (dailyChallengesPanel != null)
+        {
+            dailyChallengesPanel.SetActive(false); // Ensure the daily reward panel is initially hidden
+        }
+        if (rewardsShop != null)
+        {
+            rewardsShop.SetActive(false); // Ensure the rewards shop panel is initially hidden
+        }
     Debug.Log("GameManager Start called");
   }
 
@@ -225,6 +236,50 @@ public class GameManager : MonoBehaviour
     Time.timeScale = 1f; // Resume the game
     Debug.Log("Back to Game");
   }
+
+     // Method to open the Daily Reward Panel
+    public void OpenDailyChallengesPanel()
+    {
+        if (dailyChallengesPanel != null)
+        {
+            dailyChallengesPanel.SetActive(true);
+             Time.timeScale = 0f; // Pause the game
+        }
+        Debug.Log("Daily Challenge Panel Opened");
+    }
+
+     // Method to close the Daily Reward Panel and resume the game
+    public void CloseDailyChallengesPanel()
+    {
+        if (dailyChallengesPanel != null)
+        {
+            dailyChallengesPanel.SetActive(false);
+            Time.timeScale = 1f; // Resume the game
+        }
+        Debug.Log("Daily Reward Panel Closed");
+    }
+
+   // Method to open the Rewards Shop
+    public void OpenRewardsShop()
+    {
+        if (rewardsShop != null)
+        {
+            rewardsShop.SetActive(true);
+            Time.timeScale = 0f; // Pause the game
+        }
+        Debug.Log("Rewards Shop Opened");
+    }
+
+     // Method to close the Rewards Shop and resume the game
+    public void CloseRewardsShop()
+    {
+        if (rewardsShop != null)
+        {
+            rewardsShop.SetActive(false);
+            Time.timeScale = 1f; // Resume the game
+        }
+        Debug.Log("Rewards Shop Closed");
+    }
 
   private IEnumerator ShakeButton(Transform buttonTransform)
   {
