@@ -270,7 +270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e72d9db25c5a47d4fbf56ddd24a1e558, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scoreMax: 300000
+  scoreMax: 5000
   startPointZ: 0
   endPointZ: 1
 --- !u!4 &15954787
@@ -514,8 +514,9 @@ GameObject:
   - component: {fileID: 67747743}
   - component: {fileID: 67747742}
   - component: {fileID: 67747741}
+  - component: {fileID: 67747744}
   m_Layer: 0
-  m_Name: CautionLine
+  m_Name: FoulLineVisuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -609,6 +610,20 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 67747739}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &67747744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 67747739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dddf34e3a8f43a74d827429f67de294a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FoulLineStart: {fileID: 906058305}
+  FoulLineEnd: {fileID: 2002342776}
 --- !u!1 &92689028
 GameObject:
   m_ObjectHideFlags: 0
@@ -21957,10 +21972,10 @@ RectTransform:
   - {fileID: 355587751}
   - {fileID: 1816161925}
   - {fileID: 1427997994}
-  - {fileID: 1359620511}
-  - {fileID: 1097000627}
-  - {fileID: 207323525}
   - {fileID: 1903799026}
+  - {fileID: 1097000627}
+  - {fileID: 1359620511}
+  - {fileID: 207323525}
   - {fileID: 2075862325}
   - {fileID: 968613612}
   - {fileID: 487367450}
