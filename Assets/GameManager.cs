@@ -10,27 +10,27 @@ public class GameManager : MonoBehaviour
   public static GameManager instance;
 
   public GameObject gameOverPanel; // Game Over panel to display
-
   public TextMeshProUGUI gameOverText;
   public TextMeshProUGUI restartText;
   public GameObject settingsModal;
-
   public GameObject dailyChallengesPanel;
   public GameObject rewardsShop;
-
   public Toggle vibrationToggle;
   public Toggle soundToggle;
   public Toggle musicToggle;
-
   public TextMeshProUGUI bombCounterText;
   public Button bombButton;
   public GameObject bombPrefab;
+
   private int bombCounter = 0;
   private Dictionary<int, int> polyhedronCounts; // Dictionary to keep track of polyhedron counts
   public TextMeshProUGUI polyhedronCountsText; // Text component to display the counts
-
   private bool isPaused = false;
   private Coroutine shakeCoroutine; // Reference to the shake coroutine
+
+  // =======================================
+  // Unity Standard Methods
+  // =======================================
 
   void Awake()
   {
@@ -65,14 +65,14 @@ public class GameManager : MonoBehaviour
     {
       bombButton.onClick.AddListener(UseBomb);
     }
-     if (dailyChallengesPanel != null)
-        {
-            dailyChallengesPanel.SetActive(false); // Ensure the daily reward panel is initially hidden
-        }
-        if (rewardsShop != null)
-        {
-            rewardsShop.SetActive(false); // Ensure the rewards shop panel is initially hidden
-        }
+    if (dailyChallengesPanel != null)
+    {
+      dailyChallengesPanel.SetActive(false); // Ensure the daily reward panel is initially hidden
+    }
+    if (rewardsShop != null)
+    {
+      rewardsShop.SetActive(false); // Ensure the rewards shop panel is initially hidden
+    }
     Debug.Log("GameManager Start called");
   }
 
@@ -91,6 +91,9 @@ public class GameManager : MonoBehaviour
     }
   }
 
+  // =======================================
+  // Game Control Methods
+  // =======================================
 
   public void GameOver()
   {
@@ -113,11 +116,16 @@ public class GameManager : MonoBehaviour
     }
     Time.timeScale = 0f; // Pause the game
   }
+
   public void RestartGame()
   {
     Time.timeScale = 1f; // Unpause the game
     SceneManager.LoadScene(SceneManager.GetActiveScene().name);
   }
+
+  // =======================================
+  // Settings Modal Methods
+  // =======================================
 
   public void ToggleSettings()
   {
@@ -161,6 +169,10 @@ public class GameManager : MonoBehaviour
     Debug.Log("Music: " + musicToggle.isOn);
   }
 
+  // =======================================
+  // Bomb Management Methods
+  // =======================================
+
   public void IncrementBombCounter()
   {
     bombCounter++;
@@ -201,6 +213,33 @@ public class GameManager : MonoBehaviour
     }
   }
 
+  private IEnumerator ShakeButton(Transform buttonTransform)
+  {
+    Vector3 originalPosition = buttonTransform.localPosition;
+    float shakeDuration = 0.5f; // Duration of the shake
+    float shakeMagnitude = 5f; // Magnitude of the shake
+    float elapsed = 0.0f;
+
+    while (elapsed < shakeDuration)
+    {
+      float x = Random.Range(-1f, 1f) * shakeMagnitude;
+      float y = Random.Range(-1f, 1f) * shakeMagnitude;
+
+      buttonTransform.localPosition = new Vector3(originalPosition.x + x, originalPosition.y + y, originalPosition.z);
+
+      elapsed += Time.deltaTime;
+
+      yield return null;
+    }
+
+    buttonTransform.localPosition = originalPosition; // Reset to original position
+    shakeCoroutine = null; // Reset the coroutine reference
+  }
+
+  // =======================================
+  // Polyhedron Count Methods
+  // =======================================
+
   public void IncrementPolyhedronCount(int value)
   {
     if (polyhedronCounts.ContainsKey(value))
@@ -227,8 +266,10 @@ public class GameManager : MonoBehaviour
     }
   }
 
+  // =======================================
+  // Navigation Methods
+  // =======================================
 
-  // Method to close the settings menu and return to the game
   public void BackToGame()
   {
     isPaused = false;
@@ -237,70 +278,43 @@ public class GameManager : MonoBehaviour
     Debug.Log("Back to Game");
   }
 
-     // Method to open the Daily Reward Panel
-    public void OpenDailyChallengesPanel()
-    {
-        if (dailyChallengesPanel != null)
-        {
-            dailyChallengesPanel.SetActive(true);
-             Time.timeScale = 0f; // Pause the game
-        }
-        Debug.Log("Daily Challenge Panel Opened");
-    }
-
-     // Method to close the Daily Reward Panel and resume the game
-    public void CloseDailyChallengesPanel()
-    {
-        if (dailyChallengesPanel != null)
-        {
-            dailyChallengesPanel.SetActive(false);
-            Time.timeScale = 1f; // Resume the game
-        }
-        Debug.Log("Daily Reward Panel Closed");
-    }
-
-   // Method to open the Rewards Shop
-    public void OpenRewardsShop()
-    {
-        if (rewardsShop != null)
-        {
-            rewardsShop.SetActive(true);
-            Time.timeScale = 0f; // Pause the game
-        }
-        Debug.Log("Rewards Shop Opened");
-    }
-
-     // Method to close the Rewards Shop and resume the game
-    public void CloseRewardsShop()
-    {
-        if (rewardsShop != null)
-        {
-            rewardsShop.SetActive(false);
-            Time.timeScale = 1f; // Resume the game
-        }
-        Debug.Log("Rewards Shop Closed");
-    }
-
-  private IEnumerator ShakeButton(Transform buttonTransform)
+  public void OpenDailyChallengesPanel()
   {
-    Vector3 originalPosition = buttonTransform.localPosition;
-    float shakeDuration = 0.5f; // Duration of the shake
-    float shakeMagnitude = 5f; // Magnitude of the shake
-    float elapsed = 0.0f;
-
-    while (elapsed < shakeDuration)
+    if (dailyChallengesPanel != null)
     {
-      float x = Random.Range(-1f, 1f) * shakeMagnitude;
-      float y = Random.Range(-1f, 1f) * shakeMagnitude;
-
-      buttonTransform.localPosition = new Vector3(originalPosition.x + x, originalPosition.y + y, originalPosition.z);
-
-      elapsed += Time.deltaTime;
-
-      yield return null;
+      dailyChallengesPanel.SetActive(true);
+      Time.timeScale = 0f; // Pause the game
     }
+    Debug.Log("Daily Challenge Panel Opened");
+  }
 
-    buttonTransform.localPosition = originalPosition; // Reset to original position
-    shakeCoroutine = null; // Reset the coroutine reference
+  public void CloseDailyChallengesPanel()
+  {
+    if (dailyChallengesPanel != null)
+    {
+      dailyChallengesPanel.SetActive(false);
+      Time.timeScale = 1f; // Resume the game
+    }
+    Debug.Log("Daily Reward Panel Closed");
+  }
+
+  public void OpenRewardsShop()
+  {
+    if (rewardsShop != null)
+    {
+      rewardsShop.SetActive(true);
+      Time.timeScale = 0f; // Pause the game
+    }
+    Debug.Log("Rewards Shop Opened");
+  }
+
+  public void CloseRewardsShop()
+  {
+    if (rewardsShop != null)
+    {
+      rewardsShop.SetActive(false);
+      Time.timeScale = 1f; // Resume the game
+    }
+    Debug.Log("Rewards Shop Closed");
   }
 }
