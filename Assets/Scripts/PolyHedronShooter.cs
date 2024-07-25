@@ -1,10 +1,17 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Property_Attributes;
 using TMPro;
+using Random = UnityEngine.Random;
 
 public class PolyhedronShooter : MonoBehaviour
 {
+    [SerializeField] private int nextPolyIndex = -1;
+    [SerializeField, ReadOnly] private int nextPolySize;
+    [Space(20)]
+    
     public GameObject polyhedronPrefab;
     public Transform shootPoint;
     public GameObject arrowPrefab; // Reference to the arrow prefab
@@ -28,6 +35,11 @@ public class PolyhedronShooter : MonoBehaviour
     private bool shotCooldown = false;
     private GameObject previewPolyhedron;
     private GameObject arrowInstance;
+
+    private void OnValidate()
+    {
+        nextPolySize = nextPolyIndex <= 0 ? 0 : (int)Mathf.Pow(2, nextPolyIndex);
+    }
 
     private Dictionary<int, Color> valueColorMap = new Dictionary<int, Color>()
     {
@@ -110,7 +122,7 @@ public class PolyhedronShooter : MonoBehaviour
         }
 
         // Select a random value
-        int randomValue = possibleValues[Random.Range(0, possibleValues.Count)];
+        int randomValue = nextPolyIndex > 0 ? nextPolyIndex : possibleValues[Random.Range(0, possibleValues.Count)];
 
         // Get the color for the selected value
         Color color = valueColorMap[randomValue];
