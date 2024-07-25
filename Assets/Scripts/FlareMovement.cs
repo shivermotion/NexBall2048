@@ -6,6 +6,10 @@ public class FlareMovement : MonoBehaviour
     public Transform endPoint; // Ending point of the flare
     public float speed = 2f; // Speed of the flare
     public Transform gameOverZoneScaler; // Reference to the game over zone scaler
+    [SerializeField] private Light flickerLight;
+    [SerializeField] private float lightMinIntensity = .5f;
+    [SerializeField] private float lightMaxIntensity = 2f;
+    [SerializeField] private float flickerSpeed = .49f; 
 
     private bool movingToEnd = true;
 
@@ -34,6 +38,10 @@ public class FlareMovement : MonoBehaviour
             if (Vector3.Distance(transform.position, startPoint.position) < 0.1f)
                 movingToEnd = true;
         }
+
+        flickerLight.intensity =
+            lightMinIntensity +
+            (Mathf.PerlinNoise(0, Time.time * flickerSpeed) * (lightMaxIntensity - lightMinIntensity));
     }
 
     void UpdatePositions()

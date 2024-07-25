@@ -295,6 +295,10 @@ public class PolyhedronShooter : MonoBehaviour
 
         while (elapsedTime < polyData.wiggleDuration)
         {
+            if (!polyhedron)
+            {
+                yield break;
+            }
             float scale = originalScale + Mathf.Sin(elapsedTime * Mathf.PI * 4) * polyData.wiggleMagnitude;
             polyhedron.transform.localScale = new Vector3(scale, scale, scale);
             elapsedTime += Time.deltaTime;
