@@ -50,6 +50,10 @@ public class PolyhedronShooter : MonoBehaviour
         128, 256, 512, 1024, 2048,
     };
 
+    // =======================================
+    // Unity Standard Methods
+    // =======================================
+
     void Start()
     {
         // Apply the gravity scale globally
@@ -94,6 +98,10 @@ public class PolyhedronShooter : MonoBehaviour
             GameManager.instance.IncrementBombCounter();
         }
     }
+
+    // =======================================
+    // Polyhedron Handling Methods
+    // =======================================
 
     void LoadNextPolyhedron()
     {
@@ -277,6 +285,25 @@ public class PolyhedronShooter : MonoBehaviour
         LoadNextPolyhedron();
     }
 
+    // =======================================
+    // Bomb Handling Methods
+    // =======================================
+
+    public void SpawnBomb(GameObject bombPrefab)
+    {
+        if (previewPolyhedron != null)
+        {
+            Destroy(previewPolyhedron);
+        }
+
+        previewPolyhedron = Instantiate(bombPrefab, shootPoint.position, Quaternion.identity);
+        Debug.Log("Bomb spawned on the shoot point.");
+    }
+
+    // =======================================
+    // Coroutines
+    // =======================================
+
     IEnumerator CoolDown()
     {
         shotCooldown = true;
@@ -298,16 +325,5 @@ public class PolyhedronShooter : MonoBehaviour
         }
 
         polyhedron.transform.localScale = originalScaleVector; // Reset to original scale
-    }
-
-    public void SpawnBomb(GameObject bombPrefab)
-    {
-        if (previewPolyhedron != null)
-        {
-            Destroy(previewPolyhedron);
-        }
-
-        previewPolyhedron = Instantiate(bombPrefab, shootPoint.position, Quaternion.identity);
-        Debug.Log("Bomb spawned on the shoot point.");
     }
 }
