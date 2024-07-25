@@ -113,7 +113,7 @@ public class ScoreManager : MonoBehaviour
 
     comboCount++;
     comboTimer = 0f; // Reset the combo timer
-    Debug.Log($"Combo triggered. Combo count: {comboCount}"); // Debug log for combo trigger
+    //Debug.Log($"Combo triggered. Combo count: {comboCount}"); // Debug log for combo trigger
     UpdateComboText(position);
 
     if (gameOverZoneScaler != null)
@@ -133,7 +133,7 @@ public class ScoreManager : MonoBehaviour
   {
     comboCount = 0;
     comboTimer = 0f;
-    Debug.Log("Combo reset."); // Debug log for combo reset
+    //Debug.Log("Combo reset."); // Debug log for combo reset
   
   }
 
@@ -159,7 +159,7 @@ public class ScoreManager : MonoBehaviour
     // {
     //     Debug.LogWarning("ComboText is not assigned.");
     // }
-    Debug.Log("Combo text spawned");
+    //Debug.Log("Combo text spawned");
     ComboCounterText.instance.SpawnComboText(position, comboCount);
   }
 

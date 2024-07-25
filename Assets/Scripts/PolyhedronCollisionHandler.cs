@@ -89,7 +89,7 @@ public class PolyhedronCollisionHandler : MonoBehaviour
         int newValue = value * 2;
 
         // Log the collision and new value
-        Debug.Log($"Collision detected between two polyhedrons with value: {value}. Creating new polyhedron with value: {newValue}");
+        //Debug.Log($"Collision detected between two polyhedrons with value: {value}. Creating new polyhedron with value: {newValue}");
 
         // Apply striking force to both polyhedrons
         ApplyStrikingForce(collision, otherPolyhedron);
@@ -144,7 +144,7 @@ public class PolyhedronCollisionHandler : MonoBehaviour
         Destroy(otherPolyhedron.gameObject);
 
         // Log the creation of the new polyhedron
-        Debug.Log($"New polyhedron with value {newValue} created at position {collisionPoint}");
+        //Debug.Log($"New polyhedron with value {newValue} created at position {collisionPoint}");
 
         // Destroy the particle system after it finishes
         Destroy(shatteredGlass, particleSystem.main.duration);
@@ -157,7 +157,7 @@ public class PolyhedronCollisionHandler : MonoBehaviour
         {
             Vector3 outwardForce = Random.onUnitSphere * shooter.explosionForce; // Use explosionForce from shooter
             rb.AddForce(outwardForce, ForceMode.Impulse);
-            Debug.Log($"Applying outward force: {outwardForce}");
+            //Debug.Log($"Applying outward force: {outwardForce}");
         }
     }
 
@@ -223,7 +223,7 @@ public class PolyhedronCollisionHandler : MonoBehaviour
             float explosionDistance = explosionDirection.magnitude;
             float explosionEffect = 1 - (explosionDistance / explosionRange);
             rb.AddForce(explosionDirection.normalized * explosionForce * explosionEffect, ForceMode.Impulse);
-            Debug.Log($"Applying explosion force to {hit.name}");
+            //Debug.Log($"Applying explosion force to {hit.name}");
         }
     }
 

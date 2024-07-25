@@ -67,7 +67,7 @@ public class PolyhedronShooter : MonoBehaviour
         // Check for spacebar press to shoot the polyhedron
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("Spacebar pressed");
+            //Debug.Log("Spacebar pressed");
             ShootPolyhedron();
         }
 
@@ -157,7 +157,7 @@ public class PolyhedronShooter : MonoBehaviour
         // Set the polyhedron's value, color, and size
         SetPolyhedronAttributes(previewPolyhedron, randomValue, color, scaleFactor);
 
-        Debug.Log("Preview Polyhedron instantiated at: " + previewPolyhedron.transform.position + " with value: " + randomValue);
+        //Debug.Log("Preview Polyhedron instantiated at: " + previewPolyhedron.transform.position + " with value: " + randomValue);
     }
 
     public GameObject CreatePolyhedron(Vector3 position, int value)
@@ -181,12 +181,12 @@ public class PolyhedronShooter : MonoBehaviour
             Vector3 randomDirection = Random.onUnitSphere;
             randomDirection.y = Mathf.Abs(randomDirection.y); // Ensure the direction is upwards
             rb.AddForce(randomDirection * popUpVelocity, ForceMode.Impulse);
-            Debug.Log($"Applying pop-up force: {randomDirection * popUpVelocity}");
+            //Debug.Log($"Applying pop-up force: {randomDirection * popUpVelocity}");
 
             // Apply random spin
             Vector3 randomTorque = Random.insideUnitSphere * spinTorque;
             rb.AddTorque(randomTorque, ForceMode.Impulse);
-            Debug.Log($"Applying spin torque: {randomTorque}");
+            //Debug.Log($"Applying spin torque: {randomTorque}");
 
             // Add bounciness
             Collider collider = newPolyhedron.GetComponent<Collider>();
@@ -216,7 +216,7 @@ public class PolyhedronShooter : MonoBehaviour
         if (value >= 2048)
         {
             GameManager.instance.IncrementBombCounter();
-            Debug.Log($"Polyhedron with value {value} created. Incrementing bomb counter.");
+            //Debug.Log($"Polyhedron with value {value} created. Incrementing bomb counter.");
         }
 
         return newPolyhedron;
@@ -248,12 +248,12 @@ public class PolyhedronShooter : MonoBehaviour
     {
         if (shotCooldown)
         {
-            Debug.Log("Shot on cooldown");
+            //Debug.Log("Shot on cooldown");
             return;
         }
         if (previewPolyhedron != null)
         {
-            Debug.Log("Shooting Polyhedron at position: " + previewPolyhedron.transform.position);
+            //Debug.Log("Shooting Polyhedron at position: " + previewPolyhedron.transform.position);
             Rigidbody rb = previewPolyhedron.GetComponent<Rigidbody>();
             if (rb != null)
             {
@@ -262,7 +262,7 @@ public class PolyhedronShooter : MonoBehaviour
                 Vector3 force = Vector3.forward * shootForce;
                 rb.velocity = Vector3.zero; // Reset velocity
                 rb.AddForce(force, ForceMode.Impulse);
-                Debug.Log("Force applied to Polyhedron: " + force);
+                //Debug.Log("Force applied to Polyhedron: " + force);
 
                 // Reset the recently shot flag and timer
                 PolyhedronCollisionHandler handler = previewPolyhedron.GetComponent<PolyhedronCollisionHandler>();
@@ -308,6 +308,6 @@ public class PolyhedronShooter : MonoBehaviour
         }
 
         previewPolyhedron = Instantiate(bombPrefab, shootPoint.position, Quaternion.identity);
-        Debug.Log("Bomb spawned on the shoot point.");
+        //Debug.Log("Bomb spawned on the shoot point.");
     }
 }

@@ -73,7 +73,7 @@ public class GameManager : MonoBehaviour
     {
       rewardsShop.SetActive(false); // Ensure the rewards shop panel is initially hidden
     }
-    Debug.Log("GameManager Start called");
+    //Debug.Log("GameManager Start called");
   }
 
   void Update()
@@ -139,7 +139,7 @@ public class GameManager : MonoBehaviour
     }
 
     settingsModal.SetActive(isPaused);
-    Debug.Log("Settings Modal set to: " + isPaused);
+    //Debug.Log("Settings Modal set to: " + isPaused);
 
     if (isPaused)
     {
@@ -180,7 +180,7 @@ public class GameManager : MonoBehaviour
     {
       bombCounterText.text = bombCounter.ToString();
     }
-    Debug.Log("Bomb counter incremented. Current bomb count: " + bombCounter);
+    //Debug.Log("Bomb counter incremented. Current bomb count: " + bombCounter);
   }
 
   public void UseBomb()
@@ -192,7 +192,7 @@ public class GameManager : MonoBehaviour
       {
         bombCounterText.text = bombCounter.ToString();
       }
-      Debug.Log("Bomb used. Current bomb count: " + bombCounter);
+      //Debug.Log("Bomb used. Current bomb count: " + bombCounter);
 
       // Notify PolyhedronShooter to spawn a bomb
       PolyhedronShooter shooter = FindObjectOfType<PolyhedronShooter>();
@@ -203,7 +203,7 @@ public class GameManager : MonoBehaviour
     }
     else
     {
-      Debug.Log("No bombs available.");
+      //Debug.Log("No bombs available.");
 
       // Start the shake effect if there are no bombs left
       if (shakeCoroutine == null)
@@ -250,7 +250,7 @@ public class GameManager : MonoBehaviour
     {
       polyhedronCounts[value] = 1;
     }
-    Debug.Log($"Polyhedron count for value {value} incremented. Current count: {polyhedronCounts[value]}");
+    //Debug.Log($"Polyhedron count for value {value} incremented. Current count: {polyhedronCounts[value]}");
   }
 
   private void DisplayPolyhedronCounts()
