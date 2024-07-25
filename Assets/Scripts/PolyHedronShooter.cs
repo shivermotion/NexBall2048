@@ -3,72 +3,63 @@ using System.Collections;
 using System.Collections.Generic;
 using PolyTypes;
 using Property_Attributes;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class PolyhedronShooter : MonoBehaviour
 {
     [SerializeField] private int nextPolyIndex = -1;
-    [SerializeField, ReadOnly] private int nextPolySize;
+    [SerializeField, ReadOnly] private string nextPolySize;
     [Space(20)]
     
     public GameObject polyhedronPrefab;
     public Transform shootPoint;
     public GameObject arrowPrefab; // Reference to the arrow prefab
-    public GameObject shatteredGlassPrefab;
-    public float shootForce = 30f;
-    public float horizontalSpeed = 20f; // Adjustable horizontal speed
-    public float instantiationDelay = 0.2f; // Delay before instantiating the next polyhedron
-    public float planeWidth = 14f; // Width of the plane
-    public float planeHeight = 10f; // Height of the plane
-    public float popUpVelocity = 2f; // Velocity for the new polyhedron to pop up
-    public float wiggleDuration = 0.5f; // Duration of the wiggle effect
-    public float wiggleMagnitude = 0.1f; // Magnitude of the wiggle effect
-    public float spinTorque = 5f; // Torque for the spin effect
-    public float gravityScale = 2f; // Gravity scale to make objects fall faster
-    public float polyhedronMass = 0.5f; // Mass of the polyhedrons
-    public float polyhedronDrag = 0.1f; // Drag of the polyhedrons
-    public float polyhedronAngularDrag = 0.05f; // Angular drag of the polyhedrons
-    public float polyhedronBounciness = 0.9f; // Bounciness of the polyhedrons
-    public float explosionForce = 5f; // Force of the explosion applied to new polyhedrons
+    public GameObject shatteredGlassPrefab;  
+    
     public GameObject bombPrefab; // Reference to the bomb prefab
     private bool shotCooldown = false;
     private GameObject previewPolyhedron;
     private GameObject arrowInstance;
+    
+    public float planeWidth = 14f; // Width of the plane
 
-    public PolyData polyTypeData = new (20);
+    [FormerlySerializedAs("polyColorData")] public PolyDataSO polyData;
+
+    private int currentMaxPolyIndex = 11;
 
     private void OnValidate()
     {
-        nextPolySize = nextPolyIndex <= 0 ? 0 : (int)Mathf.Pow(2, nextPolyIndex);
+        nextPolySize = nextPolyIndex < 0 ? "Random" : ((int)Mathf.Pow(2, nextPolyIndex+1)).ToString();
     }
     
     
 
-    private Dictionary<int, Color> valueColorMap = new Dictionary<int, Color>()
-    {
-        { 2, Color.red },
-        { 4, Color.green },
-        { 8, Color.blue },
-        { 16, Color.yellow },
-        { 32, Color.magenta },
-        { 64, Color.cyan },
-        { 128, new Color(1f, 0.5f, 0f) }, // Orange
-        { 256, new Color(0.5f, 0f, 1f) }, // Purple
-        { 512, new Color(0.75f, 1f, 0f) }, // Lime
-        { 1024, new Color(0f, 0.75f, 1f) }, // Sky Blue
-        { 2048, new Color(1f, 0f, 0.75f) },  // Pink
-    };
-
-    private List<int> possibleValues = new List<int>()
-    {
-        2, 4, 8, 16, 32, 64,
-        128, 256, 512, 1024, 2048,
-    };
+    // private Dictionary<int, Color> valueColorMap = new Dictionary<int, Color>()
+    // {
+    //     { 2, Color.red },
+    //     { 4, Color.green },
+    //     { 8, Color.blue },
+    //     { 16, Color.yellow },
+    //     { 32, Color.magenta },
+    //     { 64, Color.cyan },
+    //     { 128, new Color(1f, 0.5f, 0f) }, // Orange
+    //     { 256, new Color(0.5f, 0f, 1f) }, // Purple
+    //     { 512, new Color(0.75f, 1f, 0f) }, // Lime
+    //     { 1024, new Color(0f, 0.75f, 1f) }, // Sky Blue
+    //     { 2048, new Color(1f, 0f, 0.75f) },  // Pink
+    // };
+    //
+    // private List<int> possibleValues = new List<int>()
+    // {
+    //     2, 4, 8, 16, 32, 64,
+    //     128, 256, 512, 1024, 2048,
+    // };
 
     void Start()
     {
         // Apply the gravity scale globally
-        Physics.gravity = new Vector3(0, -9.81f * gravityScale, 0);
+        Physics.gravity = new Vector3(0, -9.81f * polyData.gravityScale, 0);
 
         // Instantiate the arrow
         arrowInstance = Instantiate(arrowPrefab);
@@ -89,7 +80,7 @@ public class PolyhedronShooter : MonoBehaviour
         // Update the horizontal position of the shoot point
         float horizontal = Input.GetAxis("Horizontal");
         Vector3 position = shootPoint.position;
-        position.x += horizontal * Time.deltaTime * horizontalSpeed; // Use the adjustable speed
+        position.x += horizontal * Time.deltaTime * polyData.horizontalSpeed; // Use the adjustable speed
 
         // Clamp the position to the width of the plane
         float halfPlaneWidth = planeWidth / 2;
@@ -117,7 +108,7 @@ public class PolyhedronShooter : MonoBehaviour
 
     IEnumerator InstantiateNextPolyhedron()
     {
-        yield return new WaitForSeconds(instantiationDelay);
+        yield return new WaitForSeconds(polyData.instantiationDelay);
 
         if (previewPolyhedron != null)
         {
@@ -125,15 +116,13 @@ public class PolyhedronShooter : MonoBehaviour
         }
 
         // Select a random value
-        int randomValue = nextPolyIndex > 0 ? nextPolyIndex : possibleValues[Random.Range(0, possibleValues.Count)];
+        int randomIndex = nextPolyIndex >= 0 ? nextPolyIndex : Random.Range(0,currentMaxPolyIndex);
 
         // Get the color for the selected value
-        Color color = valueColorMap[randomValue];
+        Color color = polyData.GetColor(randomIndex);
 
         // Calculate the scale factor based on the value, with each increment by 0.1
-        float baseSize = 0.8f;
-        int index = possibleValues.IndexOf(randomValue);
-        float scaleFactor = baseSize + (index * 0.1f);
+        float scaleFactor = polyData.GetSize(randomIndex);
 
         // Adjust the shoot point position to ensure it spawns above the plane
         shootPoint.position = new Vector3(shootPoint.position.x, scaleFactor + 0.2f, shootPoint.position.z);
@@ -146,16 +135,17 @@ public class PolyhedronShooter : MonoBehaviour
         Rigidbody rb = previewPolyhedron.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.mass = polyhedronMass; // Set mass
-            rb.drag = polyhedronDrag; // Set drag
-            rb.angularDrag = polyhedronAngularDrag; // Set angular drag
+            rb.mass = polyData.polyhedronMass; // Set mass
+            rb.drag = polyData.polyhedronDrag; // Set drag
+            rb.angularDrag = polyData.polyhedronAngularDrag; // Set angular drag
+            rb.isKinematic = true;
 
             // Add bounciness
             Collider collider = previewPolyhedron.GetComponent<Collider>();
             if (collider != null)
             {
                 PhysicMaterial bouncyMaterial = new PhysicMaterial();
-                bouncyMaterial.bounciness = polyhedronBounciness; // Set bounciness
+                bouncyMaterial.bounciness = polyData.polyhedronBounciness; // Set bounciness
                 bouncyMaterial.frictionCombine = PhysicMaterialCombine.Minimum;
                 bouncyMaterial.bounceCombine = PhysicMaterialCombine.Maximum;
                 collider.material = bouncyMaterial;
@@ -166,21 +156,20 @@ public class PolyhedronShooter : MonoBehaviour
         var collisionHandler = previewPolyhedron.GetComponent<PolyhedronCollisionHandler>();
 
         // Set the value on the front and back faces
-        collisionHandler.frontFace.text = randomValue.ToString();
-        collisionHandler.backFace.text = randomValue.ToString();
+        collisionHandler.frontFace.text = randomIndex.ToString();
+        collisionHandler.backFace.text = randomIndex.ToString();
 
         // Set the polyhedron's value, color, and size
-        SetPolyhedronAttributes(previewPolyhedron, randomValue, color, scaleFactor);
+        SetPolyhedronAttributes(previewPolyhedron, randomIndex, color, scaleFactor);
 
         //Debug.Log("Preview Polyhedron instantiated at: " + previewPolyhedron.transform.position + " with value: " + randomValue);
     }
 
     public GameObject CreatePolyhedron(Vector3 position, int value)
     {
-        Color color = valueColorMap[value];
+        Color color = polyData.GetColor(value);
         float baseSize = 0.8f;
-        int index = possibleValues.IndexOf(value);
-        float scaleFactor = baseSize + (index * 0.1f);
+        float scaleFactor = polyData.GetSize(value);
 
         GameObject newPolyhedron = Instantiate(polyhedronPrefab, position, Quaternion.identity);
         SetPolyhedronAttributes(newPolyhedron, value, color, scaleFactor);
@@ -189,17 +178,17 @@ public class PolyhedronShooter : MonoBehaviour
         Rigidbody rb = newPolyhedron.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.mass = polyhedronMass; // Set mass
-            rb.drag = polyhedronDrag; // Set drag
-            rb.angularDrag = polyhedronAngularDrag; // Set angular drag
+            rb.mass = polyData.polyhedronMass; // Set mass
+            rb.drag = polyData.polyhedronDrag; // Set drag
+            rb.angularDrag = polyData.polyhedronAngularDrag; // Set angular drag
 
             Vector3 randomDirection = Random.onUnitSphere;
             randomDirection.y = Mathf.Abs(randomDirection.y); // Ensure the direction is upwards
-            rb.AddForce(randomDirection * popUpVelocity, ForceMode.Impulse);
+            rb.AddForce(randomDirection * polyData.popUpVelocity, ForceMode.Impulse);
             //Debug.Log($"Applying pop-up force: {randomDirection * popUpVelocity}");
 
             // Apply random spin
-            Vector3 randomTorque = Random.insideUnitSphere * spinTorque;
+            Vector3 randomTorque = Random.insideUnitSphere * polyData.spinTorque;
             rb.AddTorque(randomTorque, ForceMode.Impulse);
             //Debug.Log($"Applying spin torque: {randomTorque}");
 
@@ -208,7 +197,7 @@ public class PolyhedronShooter : MonoBehaviour
             if (collider != null)
             {
                 PhysicMaterial bouncyMaterial = new PhysicMaterial();
-                bouncyMaterial.bounciness = polyhedronBounciness; // Set bounciness
+                bouncyMaterial.bounciness = polyData.polyhedronBounciness; // Set bounciness
                 bouncyMaterial.frictionCombine = PhysicMaterialCombine.Minimum;
                 bouncyMaterial.bounceCombine = PhysicMaterialCombine.Maximum;
                 collider.material = bouncyMaterial;
@@ -253,7 +242,7 @@ public class PolyhedronShooter : MonoBehaviour
 
         // Set the value and color in the PolyhedronCollisionHandler
         PolyhedronCollisionHandler handler = polyhedron.GetComponent<PolyhedronCollisionHandler>();
-        handler.value = value;
+        handler.index = value;
         handler.color = color;
         handler.recentlyShot = true; // Set as recently shot
         handler.shotTimer = 0f; // Reset shot timer
@@ -274,7 +263,7 @@ public class PolyhedronShooter : MonoBehaviour
             {
                 previewPolyhedron.GetComponent<MeshCollider>().enabled = true;
                 rb.isKinematic = false; // Reactivate physics
-                Vector3 force = Vector3.forward * shootForce;
+                Vector3 force = Vector3.forward * polyData.shootForce;
                 rb.velocity = Vector3.zero; // Reset velocity
                 rb.AddForce(force, ForceMode.Impulse);
                 //Debug.Log("Force applied to Polyhedron: " + force);
@@ -295,7 +284,7 @@ public class PolyhedronShooter : MonoBehaviour
     IEnumerator CoolDown()
     {
         shotCooldown = true;
-        yield return new WaitForSeconds(instantiationDelay);
+        yield return new WaitForSeconds(polyData.instantiationDelay);
         shotCooldown = false;
     }
 
@@ -304,9 +293,9 @@ public class PolyhedronShooter : MonoBehaviour
         Vector3 originalScaleVector = new Vector3(originalScale, originalScale, originalScale);
         float elapsedTime = 0f;
 
-        while (elapsedTime < wiggleDuration)
+        while (elapsedTime < polyData.wiggleDuration)
         {
-            float scale = originalScale + Mathf.Sin(elapsedTime * Mathf.PI * 4) * wiggleMagnitude;
+            float scale = originalScale + Mathf.Sin(elapsedTime * Mathf.PI * 4) * polyData.wiggleMagnitude;
             polyhedron.transform.localScale = new Vector3(scale, scale, scale);
             elapsedTime += Time.deltaTime;
             yield return null;

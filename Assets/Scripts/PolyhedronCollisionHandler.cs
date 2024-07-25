@@ -1,10 +1,12 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using Extension_Methods;
 
 public class PolyhedronCollisionHandler : MonoBehaviour
 {
-    public int value;
+    public int index;
+    public int value => index.IndexToPolySize();
     public Color color;
     [HideInInspector]
     public PolyhedronShooter shooter;
@@ -46,8 +48,8 @@ public class PolyhedronCollisionHandler : MonoBehaviour
         }
 
         // Update the displayed value
-        if (frontFace != null) frontFace.text = value.ToString();
-        if (backFace != null) backFace.text = value.ToString();
+        if (frontFace != null) frontFace.text = index.IndexToPolySize().ToString();
+        if (backFace != null) backFace.text = index.IndexToPolySize().ToString();
     }
 
     void Update()
@@ -80,13 +82,13 @@ public class PolyhedronCollisionHandler : MonoBehaviour
 
     PolyhedronCollisionHandler otherPolyhedron = collision.gameObject.GetComponent<PolyhedronCollisionHandler>();
 
-    if (otherPolyhedron != null && otherPolyhedron.value == value && !otherPolyhedron.isMerging)
+    if (otherPolyhedron != null && otherPolyhedron.index == index && !otherPolyhedron.isMerging)
     {
         isMerging = true;
         otherPolyhedron.isMerging = true;
 
         // Calculate the new value
-        int newValue = value * 2;
+        int newValue = index + 1;
 
         // Log the collision and new value
         //Debug.Log($"Collision detected between two polyhedrons with value: {value}. Creating new polyhedron with value: {newValue}");
@@ -155,7 +157,7 @@ public class PolyhedronCollisionHandler : MonoBehaviour
         Rigidbody rb = polyhedron.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            Vector3 outwardForce = Random.onUnitSphere * shooter.explosionForce; // Use explosionForce from shooter
+            Vector3 outwardForce = Random.onUnitSphere * shooter.polyData.explosionForce; // Use explosionForce from shooter
             rb.AddForce(outwardForce, ForceMode.Impulse);
             //Debug.Log($"Applying outward force: {outwardForce}");
         }
@@ -177,7 +179,7 @@ public class PolyhedronCollisionHandler : MonoBehaviour
 
         foreach (PolyhedronCollisionHandler otherPolyhedron in polyhedrons)
         {
-            if (otherPolyhedron != this && otherPolyhedron.value == value)
+            if (otherPolyhedron != this && otherPolyhedron.index == index)
             {
                 Vector3 direction = otherPolyhedron.transform.position - transform.position;
                 float distance = direction.magnitude;

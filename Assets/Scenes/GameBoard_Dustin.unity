@@ -13072,26 +13072,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a28108aeb3fe051468423d50a53b2c5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nextPolyIndex: 2
+  nextPolySize: 4
   polyhedronPrefab: {fileID: 5812358253566457145, guid: e169524ac0b40404e85863e0583d892a, type: 3}
   shootPoint: {fileID: 146226708}
   arrowPrefab: {fileID: 791910449}
   shatteredGlassPrefab: {fileID: 1758520936}
-  shootForce: 30
-  horizontalSpeed: 20
-  instantiationDelay: 1
-  planeWidth: 14
-  planeHeight: 10
-  popUpVelocity: 2
-  wiggleDuration: 0.5
-  wiggleMagnitude: 0.1
-  spinTorque: 5
-  gravityScale: 2
-  polyhedronMass: 0.5
-  polyhedronDrag: 0.1
-  polyhedronAngularDrag: 0.05
-  polyhedronBounciness: 0.1
-  explosionForce: 5
   bombPrefab: {fileID: 88991731903856515, guid: 1457577e9f49e64429bb68fc69784d30, type: 3}
+  planeWidth: 14
+  vars: {fileID: 11400000, guid: ce37d5dbfa6a06c449f443be64476504, type: 2}
+  polyColorData: {fileID: 11400000, guid: 3e918563ca8576c46a46a0c5b36cbab3, type: 2}
 --- !u!1001 &968610376
 PrefabInstance:
   m_ObjectHideFlags: 0

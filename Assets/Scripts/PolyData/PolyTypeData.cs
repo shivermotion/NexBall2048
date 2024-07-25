@@ -9,9 +9,7 @@ namespace PolyTypes
     [System.Serializable]
     public class PolyData
     {
-        [SerializeField] private List<PolyType> values = new();
-
-        public int count => values.Count;
+        public List<PolyType> values = new();
         
         public PolyData(int indexCount = 20)
         {
