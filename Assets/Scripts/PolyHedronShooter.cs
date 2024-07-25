@@ -1,9 +1,8 @@
-using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using PolyTypes;
 using Property_Attributes;
-using TMPro;
 using Random = UnityEngine.Random;
 
 public class PolyhedronShooter : MonoBehaviour
@@ -36,10 +35,14 @@ public class PolyhedronShooter : MonoBehaviour
     private GameObject previewPolyhedron;
     private GameObject arrowInstance;
 
+    public PolyData polyTypeData = new (20);
+
     private void OnValidate()
     {
         nextPolySize = nextPolyIndex <= 0 ? 0 : (int)Mathf.Pow(2, nextPolyIndex);
     }
+    
+    
 
     private Dictionary<int, Color> valueColorMap = new Dictionary<int, Color>()
     {
