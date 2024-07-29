@@ -1,10 +1,13 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using Extension_Methods;
 
 public class PolyhedronCollisionHandler : MonoBehaviour
 {
-    public int value;
+    [SerializeField] private GameObject mergeParticlesPrefab;
+    public int index;
+    public int value => index.IndexToPolySize();
     public Color color;
     [HideInInspector]
     public PolyhedronShooter shooter;
@@ -21,11 +24,14 @@ public class PolyhedronCollisionHandler : MonoBehaviour
     public float stayTime = 0f; // Time the polyhedron has stayed in the game over zone
     public float recognitionDelay = 2f; // Time window after being shot before it can trigger game over
 
-    public bool recentlyShot = true; // Flag to indicate if the polyhedron has been recently shot
-    public float shotTimer = 0f; // Timer to track time since it was shot
+    //public bool recentlyShot = true; // Flag to indicate if the polyhedron has been recently shot
+    public bool hasBeenShot = false;
+    public bool canTriggerGameOver = false;
 
     private bool isMerging = false;
     private Rigidbody rb;
+
+    public System.Action OnCanTriggerGameOver = default;
 
     void Start()
     {
@@ -46,62 +52,63 @@ public class PolyhedronCollisionHandler : MonoBehaviour
         }
 
         // Update the displayed value
-        if (frontFace != null) frontFace.text = value.ToString();
-        if (backFace != null) backFace.text = value.ToString();
+        if (frontFace != null) frontFace.text = index.IndexToPolySize().ToString();
+        if (backFace != null) backFace.text = index.IndexToPolySize().ToString();
     }
 
-    void Update()
+    public void OnShot()
     {
-        if (recentlyShot)
-        {
-            shotTimer += Time.deltaTime;
-            if (shotTimer >= recognitionDelay)
-            {
-                recentlyShot = false;
-            }
-        }
+        if (hasBeenShot) return;
+        hasBeenShot = true;
+    }
+
+    IEnumerator ShotTimer()
+    {
+        yield return new WaitForSeconds(recognitionDelay);
+        canTriggerGameOver = true;
+        OnCanTriggerGameOver?.Invoke();
     }
 
     void OnCollisionEnter(Collision collision)
-{
-    // Check if the collision is with a bomb
-    if (collision.gameObject.CompareTag("Bomb"))
     {
-        // Apply explosion effects
-        Explode(collision.contacts[0].point);
+        // Check if the collision is with a bomb
+        if (collision.gameObject.CompareTag("Bomb"))
+        {
+            // Apply explosion effects
+            Explode(collision.contacts[0].point);
 
-        // Destroy the bomb
-        Destroy(collision.gameObject);
+            // Destroy the bomb
+            Destroy(collision.gameObject);
 
-        return;
+            return;
+        }
+
+        if (isMerging) return;
+
+        PolyhedronCollisionHandler otherPolyhedron = collision.gameObject.GetComponent<PolyhedronCollisionHandler>();
+
+        if (otherPolyhedron != null && otherPolyhedron.index == index && !otherPolyhedron.isMerging)
+        {
+            isMerging = true;
+            otherPolyhedron.isMerging = true;
+
+            // Calculate the new value
+            int newValue = index + 1;
+
+            // Log the collision and new value
+            //Debug.Log($"Collision detected between two polyhedrons with value: {value}. Creating new polyhedron with value: {newValue}");
+
+            // Apply striking force to both polyhedrons
+            ApplyStrikingForce(collision, otherPolyhedron);
+
+            // Create the new polyhedron
+            Vector3 collisionPoint = collision.contacts[0].point;
+            otherPolyhedron.GetComponent<Collider>().enabled = false;
+            GetComponent<Collider>().enabled = false;
+
+            StartCoroutine(MergePolyhedrons(collisionPoint, newValue, otherPolyhedron));
+        }
     }
-
-    if (isMerging) return;
-
-    PolyhedronCollisionHandler otherPolyhedron = collision.gameObject.GetComponent<PolyhedronCollisionHandler>();
-
-    if (otherPolyhedron != null && otherPolyhedron.value == value && !otherPolyhedron.isMerging)
-    {
-        isMerging = true;
-        otherPolyhedron.isMerging = true;
-
-        // Calculate the new value
-        int newValue = value * 2;
-
-        // Log the collision and new value
-        Debug.Log($"Collision detected between two polyhedrons with value: {value}. Creating new polyhedron with value: {newValue}");
-
-        // Apply striking force to both polyhedrons
-        ApplyStrikingForce(collision, otherPolyhedron);
-
-        // Create the new polyhedron
-        Vector3 collisionPoint = collision.contacts[0].point;
-        otherPolyhedron.GetComponent<Collider>().enabled = false;
-        GetComponent<Collider>().enabled = false;
-
-        StartCoroutine(MergePolyhedrons(collisionPoint, newValue, otherPolyhedron));
-    }
-}
 
 
     void ApplyStrikingForce(Collision collision, PolyhedronCollisionHandler otherPolyhedron)
@@ -117,7 +124,7 @@ public class PolyhedronCollisionHandler : MonoBehaviour
         yield return new WaitForSeconds(0.1f); // Short delay to ensure proper merging
 
         // Instantiate the shattered glass effect
-        GameObject shatteredGlass = Instantiate(shooter.shatteredGlassPrefab, collisionPoint, Quaternion.identity);
+        GameObject shatteredGlass = Instantiate(mergeParticlesPrefab, collisionPoint, Quaternion.identity);
         ParticleSystem particleSystem = shatteredGlass.GetComponent<ParticleSystem>();
         if (particleSystem != null)
         {
@@ -144,7 +151,7 @@ public class PolyhedronCollisionHandler : MonoBehaviour
         Destroy(otherPolyhedron.gameObject);
 
         // Log the creation of the new polyhedron
-        Debug.Log($"New polyhedron with value {newValue} created at position {collisionPoint}");
+        //Debug.Log($"New polyhedron with value {newValue} created at position {collisionPoint}");
 
         // Destroy the particle system after it finishes
         Destroy(shatteredGlass, particleSystem.main.duration);
@@ -155,9 +162,9 @@ public class PolyhedronCollisionHandler : MonoBehaviour
         Rigidbody rb = polyhedron.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            Vector3 outwardForce = Random.onUnitSphere * shooter.explosionForce; // Use explosionForce from shooter
+            Vector3 outwardForce = Random.onUnitSphere * shooter.polyData.explosionForce; // Use explosionForce from shooter
             rb.AddForce(outwardForce, ForceMode.Impulse);
-            Debug.Log($"Applying outward force: {outwardForce}");
+            //Debug.Log($"Applying outward force: {outwardForce}");
         }
     }
 
@@ -177,7 +184,7 @@ public class PolyhedronCollisionHandler : MonoBehaviour
 
         foreach (PolyhedronCollisionHandler otherPolyhedron in polyhedrons)
         {
-            if (otherPolyhedron != this && otherPolyhedron.value == value)
+            if (otherPolyhedron != this && otherPolyhedron.index == index)
             {
                 Vector3 direction = otherPolyhedron.transform.position - transform.position;
                 float distance = direction.magnitude;
@@ -223,7 +230,7 @@ public class PolyhedronCollisionHandler : MonoBehaviour
             float explosionDistance = explosionDirection.magnitude;
             float explosionEffect = 1 - (explosionDistance / explosionRange);
             rb.AddForce(explosionDirection.normalized * explosionForce * explosionEffect, ForceMode.Impulse);
-            Debug.Log($"Applying explosion force to {hit.name}");
+            //Debug.Log($"Applying explosion force to {hit.name}");
         }
     }
 

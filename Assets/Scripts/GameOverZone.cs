@@ -10,12 +10,12 @@ public class GameOverZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Game Over Zone Triggered");
+        //Debug.Log("Game Over Zone Triggered");
         PolyhedronCollisionHandler polyhedron = other.GetComponent<PolyhedronCollisionHandler>();
         if (polyhedron != null)
         {
             polyhedronsInZone.Add(polyhedron);
-            Debug.Log($"Polyhedron with value {polyhedron.value} entered Game Over Zone. Starting countdown.");
+            //Debug.Log($"Polyhedron with value {polyhedron.value} entered Game Over Zone. Starting countdown.");
         }
     }
 
@@ -31,7 +31,7 @@ public class GameOverZone : MonoBehaviour
         {
             foreach (PolyhedronCollisionHandler polyhedron in polyhedronsInZone)
             {
-                if (polyhedron.recentlyShot)
+                if (!polyhedron.canTriggerGameOver)
                 {
                     continue;
                 }
@@ -60,10 +60,10 @@ public class GameOverZone : MonoBehaviour
         if (polyhedron != null)
         {
             polyhedronsInZone.Remove(polyhedron);
-            Debug.Log($"Polyhedron with value {polyhedron.value} exited Game Over Zone. Stopping countdown.");
+            //Debug.Log($"Polyhedron with value {polyhedron.value} exited Game Over Zone. Stopping countdown.");
             foreach (PolyhedronCollisionHandler poly in polyhedronsInZone)
             {
-                if (!poly.recentlyShot)
+                if (poly.canTriggerGameOver)
                 {
                     return;
                 }
@@ -79,7 +79,7 @@ public class GameOverZone : MonoBehaviour
 
     private IEnumerator StartGameOverCountdown(PolyhedronCollisionHandler polyhedron)
     {
-        Debug.Log($"Starting Game Over countdown for polyhedron with value {polyhedron.value}");
+        //Debug.Log($"Starting Game Over countdown for polyhedron with value {polyhedron.value}");
         for (int i = 10; i > 0; i--)
         {
             Debug.Log($"Game Over countdown for polyhedron with value {polyhedron.value}: {i}");
@@ -90,7 +90,7 @@ public class GameOverZone : MonoBehaviour
         if (polyhedron != null)
         {
             GameManager.instance.GameOver();
-            Debug.Log($"Polyhedron with value {polyhedron.value} triggered Game Over.");
+            //Debug.Log($"Polyhedron with value {polyhedron.value} triggered Game Over.");
             // Add your game over logic here
         }
     }
