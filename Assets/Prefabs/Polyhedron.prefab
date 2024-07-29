@@ -431,6 +431,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Polyhedron
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 13a2b7fb5b5a2404db031266ab9b9e05, type: 3}
+      propertyPath: m_TagString
+      value: Polyhedron
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -514,7 +518,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e1e15a1647bdb9498404898e0919278, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 0
+  mergeParticlesPrefab: {fileID: 2944396702758532163, guid: e190bf97c041e58448af6b043116cba0, type: 3}
+  index: 0
   color: {r: 1, g: 0, b: 0, a: 0}
   shooter: {fileID: 0}
   frontFace: {fileID: 1082730499860182960}
@@ -524,10 +529,12 @@ MonoBehaviour:
   stickinessRange: 5
   strikeForce: 10
   outwardForceStrength: 5
+  explosionForce: 20
+  explosionRange: 5
   stayTime: 0
   recognitionDelay: 2
-  recentlyShot: 1
-  shotTimer: 0
+  hasBeenShot: 0
+  canTriggerGameOver: 0
 --- !u!4 &6620983757099970435 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 13a2b7fb5b5a2404db031266ab9b9e05, type: 3}

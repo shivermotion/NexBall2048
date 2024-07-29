@@ -31,7 +31,7 @@ public class GameOverZone : MonoBehaviour
         {
             foreach (PolyhedronCollisionHandler polyhedron in polyhedronsInZone)
             {
-                if (polyhedron.recentlyShot)
+                if (!polyhedron.canTriggerGameOver)
                 {
                     continue;
                 }
@@ -63,7 +63,7 @@ public class GameOverZone : MonoBehaviour
             //Debug.Log($"Polyhedron with value {polyhedron.value} exited Game Over Zone. Stopping countdown.");
             foreach (PolyhedronCollisionHandler poly in polyhedronsInZone)
             {
-                if (!poly.recentlyShot)
+                if (poly.canTriggerGameOver)
                 {
                     return;
                 }

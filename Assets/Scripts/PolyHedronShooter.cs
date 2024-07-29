@@ -15,7 +15,6 @@ public class PolyhedronShooter : MonoBehaviour
     public GameObject polyhedronPrefab;
     public Transform shootPoint;
     public GameObject arrowPrefab; // Reference to the arrow prefab
-    public GameObject shatteredGlassPrefab;  
     
     public GameObject bombPrefab; // Reference to the bomb prefab
     private bool shotCooldown = false;
@@ -213,9 +212,7 @@ public class PolyhedronShooter : MonoBehaviour
         // Set the value on the front and back faces
         collisionHandler.frontFace.text = value.ToString();
         collisionHandler.backFace.text = value.ToString();
-        collisionHandler.recentlyShot = true; // Set as recently shot
-        collisionHandler.shotTimer = 0f; // Reset shot timer
-
+        
         // Check if the value is 2048 or higher
         if (value >= 2048)
         {
@@ -244,8 +241,6 @@ public class PolyhedronShooter : MonoBehaviour
         PolyhedronCollisionHandler handler = polyhedron.GetComponent<PolyhedronCollisionHandler>();
         handler.index = value;
         handler.color = color;
-        handler.recentlyShot = true; // Set as recently shot
-        handler.shotTimer = 0f; // Reset shot timer
     }
 
     void ShootPolyhedron()
@@ -270,8 +265,7 @@ public class PolyhedronShooter : MonoBehaviour
 
                 // Reset the recently shot flag and timer
                 PolyhedronCollisionHandler handler = previewPolyhedron.GetComponent<PolyhedronCollisionHandler>();
-                handler.recentlyShot = true;
-                handler.shotTimer = 0f;
+                handler.OnShot();
             }
             StartCoroutine(CoolDown());
             previewPolyhedron = null; // Reset the preview polyhedron
