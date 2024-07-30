@@ -60,6 +60,7 @@ public class PolyhedronCollisionHandler : MonoBehaviour
     {
         if (hasBeenShot) return;
         hasBeenShot = true;
+        StartCoroutine(ShotTimer());
     }
 
     IEnumerator ShotTimer()
@@ -135,7 +136,7 @@ public class PolyhedronCollisionHandler : MonoBehaviour
         ScoreManager.instance.AddScore(newValue, collisionPoint);
 
         // Create the new polyhedron
-        GameObject newPolyhedron = shooter.CreatePolyhedron(collisionPoint, newValue);
+        GameObject newPolyhedron = shooter.CreateMergedPolyhedron(collisionPoint, newValue);
 
         // Enable the mesh collider for the new polyhedron
         newPolyhedron.GetComponent<MeshCollider>().enabled = true;
