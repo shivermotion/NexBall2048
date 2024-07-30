@@ -78,6 +78,10 @@ public class PolyhedronShooter : MonoBehaviour
         }
     }
 
+    // =======================================
+    // Polyhedron Handling Methods
+    // =======================================
+
     void LoadNextPolyhedron()
     {
         StartCoroutine(InstantiateNextPolyhedron());
@@ -204,6 +208,10 @@ public class PolyhedronShooter : MonoBehaviour
         // Load the next polyhedron to be shot
         LoadNextPolyhedron();
     }
+
+    // =======================================
+    // Coroutines
+    // =======================================
 
     IEnumerator CoolDown()
     {
