@@ -32,28 +32,6 @@ public class PolyhedronShooter : MonoBehaviour
         nextPolySize = nextPolyIndex < 0 ? "Random" : ((int)Mathf.Pow(2, nextPolyIndex+1)).ToString();
     }
     
-    
-
-    // private Dictionary<int, Color> valueColorMap = new Dictionary<int, Color>()
-    // {
-    //     { 2, Color.red },
-    //     { 4, Color.green },
-    //     { 8, Color.blue },
-    //     { 16, Color.yellow },
-    //     { 32, Color.magenta },
-    //     { 64, Color.cyan },
-    //     { 128, new Color(1f, 0.5f, 0f) }, // Orange
-    //     { 256, new Color(0.5f, 0f, 1f) }, // Purple
-    //     { 512, new Color(0.75f, 1f, 0f) }, // Lime
-    //     { 1024, new Color(0f, 0.75f, 1f) }, // Sky Blue
-    //     { 2048, new Color(1f, 0f, 0.75f) },  // Pink
-    // };
-    //
-    // private List<int> possibleValues = new List<int>()
-    // {
-    //     2, 4, 8, 16, 32, 64,
-    //     128, 256, 512, 1024, 2048,
-    // };
 
     void Start()
     {
@@ -115,96 +93,66 @@ public class PolyhedronShooter : MonoBehaviour
         }
 
         // Select a random value
-        int randomIndex = nextPolyIndex >= 0 ? nextPolyIndex : Random.Range(0,currentMaxPolyIndex);
-
-        // Get the color for the selected value
-        Color color = polyData.GetColor(randomIndex);
-
-        // Calculate the scale factor based on the value, with each increment by 0.1
-        float scaleFactor = polyData.GetSize(randomIndex);
+        int value = nextPolyIndex >= 0 ? nextPolyIndex : Random.Range(0,currentMaxPolyIndex);
 
         // Adjust the shoot point position to ensure it spawns above the plane
-        shootPoint.position = new Vector3(shootPoint.position.x, scaleFactor + 0.2f, shootPoint.position.z);
+        shootPoint.position = new Vector3(shootPoint.position.x, polyData.GetSize(value) + 0.2f, shootPoint.position.z);
 
         // Instantiate the polyhedron
         Vector3 offsetPosition = shootPoint.position - new Vector3(0, 0, 1); // Slightly behind the shoot point
-        previewPolyhedron = Instantiate(polyhedronPrefab, offsetPosition, Quaternion.identity);
-
-        // Apply physics properties to the preview polyhedron
-        Rigidbody rb = previewPolyhedron.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.mass = polyData.polyhedronMass; // Set mass
-            rb.drag = polyData.polyhedronDrag; // Set drag
-            rb.angularDrag = polyData.polyhedronAngularDrag; // Set angular drag
-            rb.isKinematic = true;
-
-            // Add bounciness
-            Collider collider = previewPolyhedron.GetComponent<Collider>();
-            if (collider != null)
-            {
-                PhysicMaterial bouncyMaterial = new PhysicMaterial();
-                bouncyMaterial.bounciness = polyData.polyhedronBounciness; // Set bounciness
-                bouncyMaterial.frictionCombine = PhysicMaterialCombine.Minimum;
-                bouncyMaterial.bounceCombine = PhysicMaterialCombine.Maximum;
-                collider.material = bouncyMaterial;
-            }
-        }
-
-        // Get the PolyhedronCollisionHandler component
-        var collisionHandler = previewPolyhedron.GetComponent<PolyhedronCollisionHandler>();
-
-        // Set the value on the front and back faces
-        collisionHandler.frontFace.text = randomIndex.ToString();
-        collisionHandler.backFace.text = randomIndex.ToString();
-
-        // Set the polyhedron's value, color, and size
-        SetPolyhedronAttributes(previewPolyhedron, randomIndex, color, scaleFactor);
-
-        //Debug.Log("Preview Polyhedron instantiated at: " + previewPolyhedron.transform.position + " with value: " + randomValue);
+        previewPolyhedron = CreateNewPoly(value,false).gameObject;
     }
 
-    public GameObject CreatePolyhedron(Vector3 position, int value)
+    public PolyhedronCollisionHandler CreateNewPoly(int value, bool rbEnabled)
     {
         Color color = polyData.GetColor(value);
         float baseSize = 0.8f;
         float scaleFactor = polyData.GetSize(value);
+        
+        GameObject newPolyhedron = Instantiate(polyhedronPrefab, Vector3.zero, Quaternion.identity);
 
-        GameObject newPolyhedron = Instantiate(polyhedronPrefab, position, Quaternion.identity);
-        SetPolyhedronAttributes(newPolyhedron, value, color, scaleFactor);
-
-        // Apply random direction pop-up effect
         Rigidbody rb = newPolyhedron.GetComponent<Rigidbody>();
-        if (rb != null)
+        Collider collider = newPolyhedron.GetComponent<Collider>();
+        
+        rb.isKinematic = !rbEnabled;
+        
+        rb.mass = polyData.polyhedronMass; // Set mass
+        rb.drag = polyData.polyhedronDrag; // Set drag
+        rb.angularDrag = polyData.polyhedronAngularDrag; // Set angular drag
+        
+        PhysicMaterial bouncyMaterial = new PhysicMaterial();
+        bouncyMaterial.bounciness = polyData.polyhedronBounciness; // Set bounciness
+        bouncyMaterial.frictionCombine = PhysicMaterialCombine.Minimum;
+        bouncyMaterial.bounceCombine = PhysicMaterialCombine.Maximum;
+        collider.material = bouncyMaterial;
+        
+        // Set the color
+        Renderer renderer = newPolyhedron.GetComponent<Renderer>();
+        if (renderer != null)
         {
-            rb.mass = polyData.polyhedronMass; // Set mass
-            rb.drag = polyData.polyhedronDrag; // Set drag
-            rb.angularDrag = polyData.polyhedronAngularDrag; // Set angular drag
-
-            Vector3 randomDirection = Random.onUnitSphere;
-            randomDirection.y = Mathf.Abs(randomDirection.y); // Ensure the direction is upwards
-            rb.AddForce(randomDirection * polyData.popUpVelocity, ForceMode.Impulse);
-            //Debug.Log($"Applying pop-up force: {randomDirection * popUpVelocity}");
-
-            // Apply random spin
-            Vector3 randomTorque = Random.insideUnitSphere * polyData.spinTorque;
-            rb.AddTorque(randomTorque, ForceMode.Impulse);
-            //Debug.Log($"Applying spin torque: {randomTorque}");
-
-            // Add bounciness
-            Collider collider = newPolyhedron.GetComponent<Collider>();
-            if (collider != null)
-            {
-                PhysicMaterial bouncyMaterial = new PhysicMaterial();
-                bouncyMaterial.bounciness = polyData.polyhedronBounciness; // Set bounciness
-                bouncyMaterial.frictionCombine = PhysicMaterialCombine.Minimum;
-                bouncyMaterial.bounceCombine = PhysicMaterialCombine.Maximum;
-                collider.material = bouncyMaterial;
-            }
+            Material material = new Material(renderer.material);
+            material.color = color;
+            renderer.material = material;
         }
 
+        // Set the size based on the value
+        newPolyhedron.transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+
+        // Set the value and color in the PolyhedronCollisionHandler
+        PolyhedronCollisionHandler handler = newPolyhedron.GetComponent<PolyhedronCollisionHandler>();
+        handler.index = value;
+        handler.color = color;
+
+        return newPolyhedron.GetComponent<PolyhedronCollisionHandler>();
+    }
+
+    public GameObject CreateMergedPolyhedron(Vector3 position, int value)
+    {
+        GameObject newPolyhedron = CreateNewPoly(value, true).gameObject;
+        newPolyhedron.transform.position = position;
+
         // Apply wiggle effect
-        StartCoroutine(WiggleEffect(newPolyhedron, scaleFactor));
+        StartCoroutine(WiggleEffect(newPolyhedron, polyData.GetSize(value)));
 
         // Get the PolyhedronCollisionHandler component 
         var collisionHandler = newPolyhedron.GetComponent<PolyhedronCollisionHandler>();
@@ -220,27 +168,9 @@ public class PolyhedronShooter : MonoBehaviour
             //Debug.Log($"Polyhedron with value {value} created. Incrementing bomb counter.");
         }
 
+        collisionHandler.canTriggerGameOver = true;
+
         return newPolyhedron;
-    }
-
-    void SetPolyhedronAttributes(GameObject polyhedron, int value, Color color, float scaleFactor)
-    {
-        // Set the color
-        Renderer renderer = polyhedron.GetComponent<Renderer>();
-        if (renderer != null)
-        {
-            Material material = new Material(renderer.material);
-            material.color = color;
-            renderer.material = material;
-        }
-
-        // Set the size based on the value
-        polyhedron.transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
-
-        // Set the value and color in the PolyhedronCollisionHandler
-        PolyhedronCollisionHandler handler = polyhedron.GetComponent<PolyhedronCollisionHandler>();
-        handler.index = value;
-        handler.color = color;
     }
 
     void ShootPolyhedron()
