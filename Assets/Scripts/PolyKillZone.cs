@@ -11,6 +11,12 @@ public class PolyKillZone : MonoBehaviour
         {
             Destroy(other.gameObject);
             onPolyKilled?.Invoke();
+            return;
+        }
+
+        if (other.gameObject.CompareTag("FloorTile"))
+        {
+            Destroy(other.gameObject);
         }
     }
 }

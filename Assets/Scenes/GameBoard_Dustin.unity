@@ -18559,6 +18559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3587b07d3cfe6a5498c3338fd38adcf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  foulLinePosition: {fileID: 67747739}
 --- !u!65 &1017682081
 BoxCollider:
   m_ObjectHideFlags: 0

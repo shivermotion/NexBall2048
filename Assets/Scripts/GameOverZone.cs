@@ -12,7 +12,7 @@ public class GameOverZone : MonoBehaviour
     private HashSet<PolyhedronCollisionHandler> polyhedronsInZone = new HashSet<PolyhedronCollisionHandler>();
     [SerializeField] private GameObject foulLinePosition;
 
-    public static Vector3 FoulLinePosition => instance.foulLinePosition.transform.position;
+    public static Vector3 FoulLinePosition => instance?.foulLinePosition?.transform.position ?? Vector3.zero;
 
     private void OnEnable()
     {
