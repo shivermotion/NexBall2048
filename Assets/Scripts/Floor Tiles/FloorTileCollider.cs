@@ -18,7 +18,7 @@ public class FloorTileCollider : MonoBehaviour
     [SerializeField] private BoxCollider boxCollider;
     
     
-    private bool behindFoulLine => GameOverZone.FoulLinePosition.z > transform.position.z + 2;
+    private bool behindFoulLine => GameOverZone.FoulLinePosition.z >= transform.position.z + 1.98f;
     
     private void OnDrawGizmos()
     {

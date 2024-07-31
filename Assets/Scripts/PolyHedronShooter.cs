@@ -104,16 +104,16 @@ public class PolyhedronShooter : MonoBehaviour
 
         // Instantiate the polyhedron
         Vector3 offsetPosition = shootPoint.position - new Vector3(0, 0, 1); // Slightly behind the shoot point
-        previewPolyhedron = CreateNewPoly(value,false).gameObject;
+        previewPolyhedron = CreateNewPoly(value,false, offsetPosition).gameObject;
     }
 
-    public PolyhedronCollisionHandler CreateNewPoly(int value, bool rbEnabled)
+    public PolyhedronCollisionHandler CreateNewPoly(int value, bool rbEnabled, Vector3 position)
     {
         Color color = polyData.GetColor(value);
         float baseSize = 0.8f;
         float scaleFactor = polyData.GetSize(value);
         
-        GameObject newPolyhedron = Instantiate(polyhedronPrefab, Vector3.zero, Quaternion.identity);
+        GameObject newPolyhedron = Instantiate(polyhedronPrefab, position, Quaternion.identity);
 
         Rigidbody rb = newPolyhedron.GetComponent<Rigidbody>();
         Collider collider = newPolyhedron.GetComponent<Collider>();
@@ -152,8 +152,7 @@ public class PolyhedronShooter : MonoBehaviour
 
     public GameObject CreateMergedPolyhedron(Vector3 position, int value)
     {
-        GameObject newPolyhedron = CreateNewPoly(value, true).gameObject;
-        newPolyhedron.transform.position = position;
+        GameObject newPolyhedron = CreateNewPoly(value, true, position).gameObject;
 
         // Apply wiggle effect
         StartCoroutine(WiggleEffect(newPolyhedron, polyData.GetSize(value)));
