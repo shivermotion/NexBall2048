@@ -16,7 +16,7 @@ public class FloorTileController : MonoBehaviour
     // tile is 4x4
     private void Start()
     {
-        Vector3 TilePos(int x, int y) => new Vector3((x * 4)+2, 0,(y * 4)+2);
+        Vector3 TilePos(int x, int y) => new Vector3((x * 2)+1, 0,(y * 2)+1);
         
         for (int x = 0; x < xCount; x++)
         {
