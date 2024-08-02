@@ -17,7 +17,7 @@ Shader "Custom/GroundStencilShader"
             ZWrite Off
             ColorMask 0
             
-            Tags {"Queue" = "Geometry-100"}
+            Tags {"Queue" = "Geometry-5"}
         }
     }
 

@@ -424,9 +424,21 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 13a2b7fb5b5a2404db031266ab9b9e05, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 13a2b7fb5b5a2404db031266ab9b9e05, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 908f77777c272234eb1b9f117cda326c, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 13a2b7fb5b5a2404db031266ab9b9e05, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 494859709305c9343a47f71750afb421, type: 2}
+    - target: {fileID: -5754084199372789682, guid: 13a2b7fb5b5a2404db031266ab9b9e05, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -7943508735634667608, guid: f1ea5e9cffc429f4fb1339edd75f6207, type: 3}
     - target: {fileID: 919132149155446097, guid: 13a2b7fb5b5a2404db031266ab9b9e05, type: 3}
       propertyPath: m_Name
       value: Polyhedron
