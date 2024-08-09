@@ -1,18 +1,22 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager instance;
 
     public TextMeshProUGUI scoreText;
-    public TextMeshProUGUI highScoreText; // Add a reference for the high score text
-    public TextMeshProUGUI levelText; // Add a reference for the level text
+    public TextMeshProUGUI highScoreText;
+    public TextMeshProUGUI levelText;
+    public TextMeshProUGUI levelUpText;  // Reference for the level-up text
+    private CanvasGroup levelUpCanvasGroup;
+
     private int score = 0;
-    private int highScore = 0; // Variable to store the high score
+    private int highScore = 0;
     private int comboCount = 0;
     private float comboTimer = 0f;
-    public float comboDuration = 2f; // Duration to keep the combo active
+    public float comboDuration = 2f;
 
     public GameOverZoneScaler gameOverZoneScaler;
 
@@ -37,12 +41,14 @@ public class ScoreManager : MonoBehaviour
 
     void Start()
     {
-        if (scoreText == null || highScoreText == null || levelText == null)
+        if (scoreText == null || highScoreText == null || levelText == null || levelUpText == null)
         {
-            Debug.LogError("ScoreText, ComboText, LevelText, or HighScoreText is not assigned in the inspector.");
+            Debug.LogError("ScoreText, ComboText, LevelText, HighScoreText, or LevelUpText is not assigned in the inspector.");
             enabled = false; // Disable the script to prevent further errors
             return;
         }
+
+        levelUpCanvasGroup = levelUpText.GetComponent<CanvasGroup>();
 
         // Load the high score from PlayerPrefs
         highScore = PlayerPrefs.GetInt("HighScore", 0);
@@ -151,7 +157,7 @@ public class ScoreManager : MonoBehaviour
     {
         Debug.Log("Level Up! New Level: " + currentLevel);
         UpdateLevelText();
-        // Implement any actions to be taken when the player levels up
+        StartCoroutine(PlayLevelUpAnimation());
     }
 
     void ResetCombo()
@@ -205,24 +211,59 @@ public class ScoreManager : MonoBehaviour
     {
         try
         {
-            // Reset the current score
             score = 0;
             UpdateScoreText();
-
-            // Reset the combo count and timer
             ResetCombo();
 
-            // Reload the high score from PlayerPrefs to ensure it persists
             highScore = PlayerPrefs.GetInt("HighScore", 0);
             UpdateHighScoreText();
 
-            // Reload the current scene or reset necessary game elements
-            // For simplicity, you might just reload the current scene:
             UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
         catch (System.Exception ex)
         {
             Debug.LogError("An unexpected error occurred during game restart: " + ex.Message);
+        }
+    }
+
+    private IEnumerator PlayLevelUpAnimation()
+    {
+        // Set initial state
+        levelUpText.text = "Level " + currentLevel + "!";
+        levelUpCanvasGroup.alpha = 0f;
+        RectTransform rectTransform = levelUpText.rectTransform;
+        Vector3 startPosition = new Vector3(-Screen.width / 2, rectTransform.anchoredPosition.y, 0f);
+        Vector3 endPosition = new Vector3(0, rectTransform.anchoredPosition.y, 0f);
+        rectTransform.anchoredPosition = startPosition;
+
+        // Fade in and slide in
+        float duration = 1f;
+        float timer = 0f;
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            float t = timer / duration;
+
+            rectTransform.anchoredPosition = Vector3.Lerp(startPosition, endPosition, t);
+            levelUpCanvasGroup.alpha = Mathf.Lerp(0f, 1f, t);
+
+            yield return null;
+        }
+
+        // Pause briefly
+        yield return new WaitForSeconds(1f);
+
+        // Fade out
+        duration = 0.5f;
+        timer = 0f;
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            float t = timer / duration;
+
+            levelUpCanvasGroup.alpha = Mathf.Lerp(1f, 0f, t);
+
+            yield return null;
         }
     }
 }
