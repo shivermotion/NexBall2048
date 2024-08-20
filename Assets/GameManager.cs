@@ -34,15 +34,12 @@ public class GameManager : MonoBehaviour
 
   void Awake()
   {
-    if (instance == null)
+    if (instance != null)
     {
-      instance = this;
-      DontDestroyOnLoad(gameObject);
+      Destroy(instance.gameObject); 
     }
-    else
-    {
-      Destroy(gameObject);
-    }
+    
+    instance = this;
   }
 
   void Start()
@@ -82,6 +79,7 @@ public class GameManager : MonoBehaviour
     if (Time.timeScale == 0f && Input.GetKeyDown(KeyCode.R))
     {
       RestartGame();
+      return;
     }
 
     // Check if the "G" key is pressed to trigger the game over sequence

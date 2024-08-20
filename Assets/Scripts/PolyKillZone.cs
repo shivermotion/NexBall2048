@@ -11,6 +11,9 @@ public class PolyKillZone : MonoBehaviour
         {
             Destroy(other.gameObject);
             onPolyKilled?.Invoke();
+            
+            GameManager.instance.GameOver();
+            
             return;
         }
 

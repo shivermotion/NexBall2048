@@ -48,5 +48,6 @@ namespace PolyTypes
         public float polyhedronAngularDrag = 0.05f; // Angular drag of the polyhedrons
         public float polyhedronBounciness = 0.9f; // Bounciness of the polyhedrons
         public float explosionForce = 5f; // Force of the explosion applied to new polyhedrons
+        public int initialMaxPolyValue = 6; // Default max value of a randomly spawned polyhedron 
     }
 }

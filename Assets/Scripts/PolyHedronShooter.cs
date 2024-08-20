@@ -25,7 +25,7 @@ public class PolyhedronShooter : MonoBehaviour
 
     [FormerlySerializedAs("polyColorData")] public PolyDataSO polyData;
 
-    private int currentMaxPolyIndex = 11;
+    private int currentMaxPolyIndex => polyData.initialMaxPolyValue;
 
     private void OnValidate()
     {

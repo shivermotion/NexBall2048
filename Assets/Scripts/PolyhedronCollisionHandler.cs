@@ -7,7 +7,7 @@ public class PolyhedronCollisionHandler : MonoBehaviour
 {
     [SerializeField] private GameObject mergeParticlesPrefab;
     public int index;
-    public int value => index.IndexToPolySize();
+    public int value => index.IndexToPolyValue();
     public Color color;
     [HideInInspector]
     public PolyhedronShooter shooter;
@@ -52,8 +52,8 @@ public class PolyhedronCollisionHandler : MonoBehaviour
         }
 
         // Update the displayed value
-        if (frontFace != null) frontFace.text = index.IndexToPolySize().ToString();
-        if (backFace != null) backFace.text = index.IndexToPolySize().ToString();
+        if (frontFace != null) frontFace.text = index.IndexToPolyValue().ToString();
+        if (backFace != null) backFace.text = index.IndexToPolyValue().ToString();
     }
 
     public void OnShot()
@@ -133,7 +133,7 @@ public class PolyhedronCollisionHandler : MonoBehaviour
         }
 
         // Add score
-        ScoreManager.instance.AddScore(newValue, collisionPoint);
+        ScoreManager.instance.AddScore(newValue.IndexToPolyValue(), collisionPoint);
 
         // Create the new polyhedron
         GameObject newPolyhedron = shooter.CreateMergedPolyhedron(collisionPoint, newValue);
