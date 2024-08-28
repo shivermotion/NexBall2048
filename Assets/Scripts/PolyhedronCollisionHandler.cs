@@ -132,6 +132,13 @@ public class PolyhedronCollisionHandler : MonoBehaviour
             particleSystem.Play();
         }
 
+        // Add Base Value Multiplier
+        int multiplierIndex = newValue - 9;
+        if (multiplierIndex >= 1)
+        {
+            shooter.AddMultiplier(multiplierIndex, 10);
+        }
+        
         // Add score
         ScoreManager.instance.AddScore(newValue.IndexToPolyValue(), collisionPoint);
 
@@ -156,6 +163,8 @@ public class PolyhedronCollisionHandler : MonoBehaviour
 
         // Destroy the particle system after it finishes
         Destroy(shatteredGlass, particleSystem.main.duration);
+        
+        
     }
 
     void ApplyOutwardForce(GameObject polyhedron)

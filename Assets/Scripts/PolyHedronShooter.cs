@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using PolyTypes;
 using Property_Attributes;
 using UnityEngine.Serialization;
@@ -25,6 +26,8 @@ public class PolyhedronShooter : MonoBehaviour
 
     [FormerlySerializedAs("polyColorData")] public PolyDataSO polyData;
 
+    Dictionary<int, int> baseValueMultiplier = new();
+ 
     private int currentMaxPolyIndex => polyData.initialMaxPolyValue;
 
     private void OnValidate()
@@ -109,6 +112,8 @@ public class PolyhedronShooter : MonoBehaviour
 
     public PolyhedronCollisionHandler CreateNewPoly(int value, bool rbEnabled, Vector3 position)
     {
+        value += UseMultiplier();
+        
         Color color = polyData.GetColor(value);
         float baseSize = 0.8f;
         float scaleFactor = polyData.GetSize(value);
@@ -249,4 +254,51 @@ public class PolyhedronShooter : MonoBehaviour
         previewPolyhedron = Instantiate(bombPrefab, shootPoint.position, Quaternion.identity);
         //Debug.Log("Bomb spawned on the shoot point.");
     }
+    
+    #region Base Value Multiplier
+
+    public void AddMultiplier(int power, int shotCount)
+    {
+        if (!baseValueMultiplier.TryAdd(power, shotCount))
+        {
+            baseValueMultiplier[power] += shotCount;
+        }
+
+        foreach (var item in baseValueMultiplier)
+        {
+            Debug.Log($"{item.Key}:{item.Value} - Multiplier: {baseValueMultiplier.Count}");
+        }
+    }
+
+    public int UseMultiplier()
+    {
+        int multiplierStack = baseValueMultiplier.Count;
+
+        var keys = baseValueMultiplier.Keys.Select(a => a);
+        var keysToRemove = new HashSet<int>();
+
+        foreach (int item in keys)
+        {
+            baseValueMultiplier[item]--;
+            
+            if (baseValueMultiplier[item] <= 0)
+            {
+                keysToRemove.Add(item);
+            }
+        }
+        
+        foreach (int item in keysToRemove)
+        {
+            baseValueMultiplier.Remove(item);
+        }
+        
+        foreach (var item in baseValueMultiplier)
+        {
+            Debug.Log($"{item.Key}:{item.Value} - Multiplier: {baseValueMultiplier.Count}");
+        }
+
+        return multiplierStack;
+    }
+    
+    #endregion
 }
