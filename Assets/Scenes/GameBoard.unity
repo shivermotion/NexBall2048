@@ -13406,8 +13406,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a28108aeb3fe051468423d50a53b2c5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextPolyIndex: 9
-  nextPolySize: 1024
+  nextPolyIndex: -1
+  nextPolySize: Random
   polyhedronPrefab: {fileID: 5812358253566457145, guid: e169524ac0b40404e85863e0583d892a, type: 3}
   shootPoint: {fileID: 146226708}
   arrowPrefab: {fileID: 891986928}
