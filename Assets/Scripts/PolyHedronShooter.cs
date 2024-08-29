@@ -274,7 +274,12 @@ public class PolyhedronShooter : MonoBehaviour
     {
         int multiplierStack = baseValueMultiplier.Count;
 
-        var keys = baseValueMultiplier.Keys.Select(a => a);
+        List<int> keys = new();
+        foreach (var item in baseValueMultiplier)
+        {
+            keys.Add(item.Key);
+        }
+        
         var keysToRemove = new HashSet<int>();
 
         foreach (int item in keys)
