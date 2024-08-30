@@ -7,312 +7,363 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
-  public static GameManager instance;
+    public static GameManager instance;
 
-  public GameObject gameOverPanel; // Game Over panel to display
-  public TextMeshProUGUI gameOverText;
-  public TextMeshProUGUI restartText;
-  public GameObject settingsModal;
-  public GameObject dailyChallengesPanel;
-  public GameObject rewardsShop;
-  public Toggle vibrationToggle;
-  public Toggle soundToggle;
-  public Toggle musicToggle;
-  public TextMeshProUGUI bombCounterText;
-  public Button bombButton;
-  public GameObject bombPrefab;
+    public GameObject gameOverPanel; // Game Over panel to display
+    public TextMeshProUGUI gameOverText;
+    public TextMeshProUGUI restartText;
+    public GameObject settingsModal;
+    public GameObject dailyChallengesPanel;
+    public GameObject rewardsShop;
+    public GameObject mainMenuModal; // Main Menu modal
+    public Toggle vibrationToggle;
+    public Toggle soundToggle;
+    public Toggle musicToggle;
+    public TextMeshProUGUI bombCounterText;
+    public Button bombButton;
+    public GameObject bombPrefab;
 
-  private int bombCounter = 0;
-  private Dictionary<int, int> polyhedronCounts; // Dictionary to keep track of polyhedron counts
-  public TextMeshProUGUI polyhedronCountsText; // Text component to display the counts
-  private bool isPaused = false;
-  private Coroutine shakeCoroutine; // Reference to the shake coroutine
+    private int bombCounter = 0;
+    private Dictionary<int, int> polyhedronCounts; // Dictionary to keep track of polyhedron counts
+    public TextMeshProUGUI polyhedronCountsText; // Text component to display the counts
+    private bool isPaused = false;
+    private Coroutine shakeCoroutine; // Reference to the shake coroutine
 
-  // =======================================
-  // Unity Standard Methods
-  // =======================================
+    // =======================================
+    // Unity Standard Methods
+    // =======================================
 
-  void Awake()
-  {
-    if (instance != null)
+    void Awake()
     {
-      Destroy(instance.gameObject); 
-    }
-    
-    instance = this;
-  }
-
-  void Start()
-  {
-    polyhedronCounts = new Dictionary<int, int>(); // Initialize the dictionary
-
-    if (gameOverPanel != null)
-    {
-      gameOverPanel.SetActive(false); // Ensure the panel is initially hidden
-    }
-    if (settingsModal != null)
-    {
-      settingsModal.SetActive(false); // Ensure the modal is initially hidden
-    }
-    if (bombCounterText != null)
-    {
-      bombCounterText.text = bombCounter.ToString();
-    }
-    if (bombButton != null)
-    {
-      bombButton.onClick.AddListener(UseBomb);
-    }
-    if (dailyChallengesPanel != null)
-    {
-      dailyChallengesPanel.SetActive(false); // Ensure the daily reward panel is initially hidden
-    }
-    if (rewardsShop != null)
-    {
-      rewardsShop.SetActive(false); // Ensure the rewards shop panel is initially hidden
-    }
-    //Debug.Log("GameManager Start called");
-  }
-
-  void Update()
-  {
-    // Check if the "R" key is pressed to restart the game when it is paused
-    if (Time.timeScale == 0f && Input.GetKeyDown(KeyCode.R))
-    {
-      RestartGame();
-      return;
+        if (instance != null)
+        {
+            Destroy(instance.gameObject); 
+        }
+        
+        instance = this;
     }
 
-    // Check if the "G" key is pressed to trigger the game over sequence
-    if (Input.GetKeyDown(KeyCode.G))
+    void Start()
     {
-      GameOver();
-    }
-  }
+        polyhedronCounts = new Dictionary<int, int>(); // Initialize the dictionary
 
-  // =======================================
-  // Game Control Methods
-  // =======================================
-
-  public void GameOver()
-  {
-    if (gameOverPanel != null)
-    {
-      gameOverPanel.SetActive(true); // Show the game over panel
-    }
-    if (gameOverText != null)
-    {
-      gameOverText.gameObject.SetActive(true);
-    }
-    if (restartText != null)
-    {
-      restartText.gameObject.SetActive(true);
-    }
-    if (polyhedronCountsText != null)
-    {
-      polyhedronCountsText.gameObject.SetActive(true);
-      DisplayPolyhedronCounts(); // Display the counts on the game over screen
-    }
-    Time.timeScale = 0f; // Pause the game
-  }
-
-  public void RestartGame()
-  {
-    Time.timeScale = 1f; // Unpause the game
-    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-  }
-
-  // =======================================
-  // Settings Modal Methods
-  // =======================================
-
-  public void ToggleSettings()
-  {
-    isPaused = !isPaused;
-    Debug.Log("ToggleSettings called. isPaused: " + isPaused);
-
-    if (settingsModal == null)
-    {
-      Debug.LogError("settingsModal is not assigned!");
-      return;
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(false); // Ensure the panel is initially hidden
+        }
+        if (settingsModal != null)
+        {
+            settingsModal.SetActive(false); // Ensure the modal is initially hidden
+        }
+        if (mainMenuModal != null)
+        {
+            mainMenuModal.SetActive(false); // Ensure the main menu modal is initially hidden
+        }
+        if (bombCounterText != null)
+        {
+            bombCounterText.text = bombCounter.ToString();
+        }
+        if (bombButton != null)
+        {
+            bombButton.onClick.AddListener(UseBomb);
+        }
+        if (dailyChallengesPanel != null)
+        {
+            dailyChallengesPanel.SetActive(false); // Ensure the daily reward panel is initially hidden
+        }
+        if (rewardsShop != null)
+        {
+            rewardsShop.SetActive(false); // Ensure the rewards shop panel is initially hidden
+        }
+        //Debug.Log("GameManager Start called");
     }
 
-    settingsModal.SetActive(isPaused);
-    //Debug.Log("Settings Modal set to: " + isPaused);
-
-    if (isPaused)
+    void Update()
     {
-      Time.timeScale = 0f; // Pause the game
-    }
-    else
-    {
-      Time.timeScale = 1f; // Resume the game
-    }
-  }
+        // Check if the "R" key is pressed to restart the game when it is paused
+        if (Time.timeScale == 0f && Input.GetKeyDown(KeyCode.R))
+        {
+            RestartGame();
+            return;
+        }
 
-  public void ToggleVibration()
-  {
-    // Implement vibration toggle logic here
-    Debug.Log("Vibration: " + vibrationToggle.isOn);
-  }
-
-  public void ToggleSound()
-  {
-    // Implement sound toggle logic here
-    Debug.Log("Sound: " + soundToggle.isOn);
-  }
-
-  public void ToggleMusic()
-  {
-    // Implement music toggle logic here
-    Debug.Log("Music: " + musicToggle.isOn);
-  }
-
-  // =======================================
-  // Bomb Management Methods
-  // =======================================
-
-  public void IncrementBombCounter()
-  {
-    bombCounter++;
-    if (bombCounterText != null)
-    {
-      bombCounterText.text = bombCounter.ToString();
-    }
-    //Debug.Log("Bomb counter incremented. Current bomb count: " + bombCounter);
-  }
-
-  public void UseBomb()
-  {
-    if (bombCounter > 0)
-    {
-      bombCounter--;
-      if (bombCounterText != null)
-      {
-        bombCounterText.text = bombCounter.ToString();
-      }
-      //Debug.Log("Bomb used. Current bomb count: " + bombCounter);
-
-      // Notify PolyhedronShooter to spawn a bomb
-      PolyhedronShooter shooter = FindObjectOfType<PolyhedronShooter>();
-      if (shooter != null)
-      {
-        shooter.SpawnBomb(bombPrefab);
-      }
-    }
-    else
-    {
-      //Debug.Log("No bombs available.");
-
-      // Start the shake effect if there are no bombs left
-      if (shakeCoroutine == null)
-      {
-        shakeCoroutine = StartCoroutine(ShakeButton(bombButton.transform));
-      }
-    }
-  }
-
-  private IEnumerator ShakeButton(Transform buttonTransform)
-  {
-    Vector3 originalPosition = buttonTransform.localPosition;
-    float shakeDuration = 0.5f; // Duration of the shake
-    float shakeMagnitude = 5f; // Magnitude of the shake
-    float elapsed = 0.0f;
-
-    while (elapsed < shakeDuration)
-    {
-      float x = Random.Range(-1f, 1f) * shakeMagnitude;
-      float y = Random.Range(-1f, 1f) * shakeMagnitude;
-
-      buttonTransform.localPosition = new Vector3(originalPosition.x + x, originalPosition.y + y, originalPosition.z);
-
-      elapsed += Time.deltaTime;
-
-      yield return null;
+        // Check if the "G" key is pressed to trigger the game over sequence
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            GameOver();
+        }
     }
 
-    buttonTransform.localPosition = originalPosition; // Reset to original position
-    shakeCoroutine = null; // Reset the coroutine reference
-  }
+    // =======================================
+    // Game Control Methods
+    // =======================================
 
-  // =======================================
-  // Polyhedron Count Methods
-  // =======================================
-
-  public void IncrementPolyhedronCount(int value)
-  {
-    if (polyhedronCounts.ContainsKey(value))
+    public void GameOver()
     {
-      polyhedronCounts[value]++;
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true); // Show the game over panel
+        }
+        if (gameOverText != null)
+        {
+            gameOverText.gameObject.SetActive(true);
+        }
+        if (restartText != null)
+        {
+            restartText.gameObject.SetActive(true);
+        }
+        if (polyhedronCountsText != null)
+        {
+            polyhedronCountsText.gameObject.SetActive(true);
+            DisplayPolyhedronCounts(); // Display the counts on the game over screen
+        }
+        Time.timeScale = 0f; // Pause the game
     }
-    else
+
+    public void RestartGame()
     {
-      polyhedronCounts[value] = 1;
+        Time.timeScale = 1f; // Unpause the game
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-    //Debug.Log($"Polyhedron count for value {value} incremented. Current count: {polyhedronCounts[value]}");
-  }
 
-  private void DisplayPolyhedronCounts()
-  {
-    if (polyhedronCountsText == null) return;
+    // =======================================
+    // Settings Modal Methods
+    // =======================================
 
-    // Clear previous text
-    polyhedronCountsText.text = "";
-
-    foreach (var entry in polyhedronCounts)
+    public void ToggleSettings()
     {
-      polyhedronCountsText.text += $"{entry.Key} : {entry.Value}\n";
+        isPaused = !isPaused;
+        Debug.Log("ToggleSettings called. isPaused: " + isPaused);
+
+        if (settingsModal == null)
+        {
+            Debug.LogError("settingsModal is not assigned!");
+            return;
+        }
+
+        settingsModal.SetActive(isPaused);
+        //Debug.Log("Settings Modal set to: " + isPaused);
+
+        if (isPaused)
+        {
+            Time.timeScale = 0f; // Pause the game
+        }
+        else
+        {
+            Time.timeScale = 1f; // Resume the game
+        }
     }
-  }
 
-  // =======================================
-  // Navigation Methods
-  // =======================================
-
-  public void BackToGame()
-  {
-    isPaused = false;
-    settingsModal.SetActive(false);
-    Time.timeScale = 1f; // Resume the game
-    Debug.Log("Back to Game");
-  }
-
-  public void OpenDailyChallengesPanel()
-  {
-    if (dailyChallengesPanel != null)
+    public void ToggleVibration()
     {
-      dailyChallengesPanel.SetActive(true);
-      Time.timeScale = 0f; // Pause the game
+        // Implement vibration toggle logic here
+        Debug.Log("Vibration: " + vibrationToggle.isOn);
     }
-    Debug.Log("Daily Challenge Panel Opened");
-  }
 
-  public void CloseDailyChallengesPanel()
-  {
-    if (dailyChallengesPanel != null)
+    public void ToggleSound()
     {
-      dailyChallengesPanel.SetActive(false);
-      Time.timeScale = 1f; // Resume the game
+        // Implement sound toggle logic here
+        Debug.Log("Sound: " + soundToggle.isOn);
     }
-    Debug.Log("Daily Reward Panel Closed");
-  }
 
-  public void OpenRewardsShop()
-  {
-    if (rewardsShop != null)
+    public void ToggleMusic()
     {
-      rewardsShop.SetActive(true);
-      Time.timeScale = 0f; // Pause the game
+        // Implement music toggle logic here
+        Debug.Log("Music: " + musicToggle.isOn);
     }
-    Debug.Log("Rewards Shop Opened");
-  }
 
-  public void CloseRewardsShop()
-  {
-    if (rewardsShop != null)
+    // =======================================
+    // Bomb Management Methods
+    // =======================================
+
+    public void IncrementBombCounter()
     {
-      rewardsShop.SetActive(false);
-      Time.timeScale = 1f; // Resume the game
+        bombCounter++;
+        if (bombCounterText != null)
+        {
+            bombCounterText.text = bombCounter.ToString();
+        }
+        //Debug.Log("Bomb counter incremented. Current bomb count: " + bombCounter);
     }
-    Debug.Log("Rewards Shop Closed");
-  }
+
+    public void UseBomb()
+    {
+        if (bombCounter > 0)
+        {
+            bombCounter--;
+            if (bombCounterText != null)
+            {
+                bombCounterText.text = bombCounter.ToString();
+            }
+            //Debug.Log("Bomb used. Current bomb count: " + bombCounter);
+
+            // Notify PolyhedronShooter to spawn a bomb
+            PolyhedronShooter shooter = FindObjectOfType<PolyhedronShooter>();
+            if (shooter != null)
+            {
+                shooter.SpawnBomb(bombPrefab);
+            }
+        }
+        else
+        {
+            //Debug.Log("No bombs available.");
+
+            // Start the shake effect if there are no bombs left
+            if (shakeCoroutine == null)
+            {
+                shakeCoroutine = StartCoroutine(ShakeButton(bombButton.transform));
+            }
+        }
+    }
+
+    private IEnumerator ShakeButton(Transform buttonTransform)
+    {
+        Vector3 originalPosition = buttonTransform.localPosition;
+        float shakeDuration = 0.5f; // Duration of the shake
+        float shakeMagnitude = 5f; // Magnitude of the shake
+        float elapsed = 0.0f;
+
+        while (elapsed < shakeDuration)
+        {
+            float x = Random.Range(-1f, 1f) * shakeMagnitude;
+            float y = Random.Range(-1f, 1f) * shakeMagnitude;
+
+            buttonTransform.localPosition = new Vector3(originalPosition.x + x, originalPosition.y + y, originalPosition.z);
+
+            elapsed += Time.deltaTime;
+
+            yield return null;
+        }
+
+        buttonTransform.localPosition = originalPosition; // Reset to original position
+        shakeCoroutine = null; // Reset the coroutine reference
+    }
+
+    // =======================================
+    // Polyhedron Count Methods
+    // =======================================
+
+    public void IncrementPolyhedronCount(int value)
+    {
+        if (polyhedronCounts.ContainsKey(value))
+        {
+            polyhedronCounts[value]++;
+        }
+        else
+        {
+            polyhedronCounts[value] = 1;
+        }
+        //Debug.Log($"Polyhedron count for value {value} incremented. Current count: {polyhedronCounts[value]}");
+    }
+
+    private void DisplayPolyhedronCounts()
+    {
+        if (polyhedronCountsText == null) return;
+
+        // Clear previous text
+        polyhedronCountsText.text = "";
+
+        foreach (var entry in polyhedronCounts)
+        {
+            polyhedronCountsText.text += $"{entry.Key} : {entry.Value}\n";
+        }
+    }
+
+    // =======================================
+    // Navigation Methods
+    // =======================================
+
+    public void OpenSettings()
+    {
+        if (settingsModal != null)
+        {
+            settingsModal.SetActive(true);
+            CloseMainMenu(); // Close the main menu when opening settings
+            Time.timeScale = 0f; // Pause the game if needed
+        }
+        Debug.Log("Settings Modal Opened");
+    }
+
+    public void OpenDailyChallengesPanel()
+    {
+        if (dailyChallengesPanel != null)
+        {
+            dailyChallengesPanel.SetActive(true);
+            CloseMainMenu(); // Close the main menu when opening daily challenges
+            Time.timeScale = 0f; // Pause the game if needed
+        }
+        Debug.Log("Daily Challenge Panel Opened");
+    }
+
+    public void OpenRewardsShop()
+    {
+        if (rewardsShop != null)
+        {
+            rewardsShop.SetActive(true);
+            CloseMainMenu(); // Close the main menu when opening the rewards shop
+            Time.timeScale = 0f; // Pause the game if needed
+        }
+        Debug.Log("Rewards Shop Opened");
+    }
+
+    public void CloseSettings()
+    {
+        if (settingsModal != null)
+        {
+            settingsModal.SetActive(false);
+        }
+        OpenMainMenu(); // Reopen the main menu if needed
+        Time.timeScale = 1f; // Resume the game
+        Debug.Log("Settings Modal Closed");
+    }
+
+    public void CloseDailyChallengesPanel()
+    {
+        if (dailyChallengesPanel != null)
+        {
+            dailyChallengesPanel.SetActive(false);
+        }
+        OpenMainMenu(); // Reopen the main menu if needed
+        Time.timeScale = 1f; // Resume the game
+        Debug.Log("Daily Reward Panel Closed");
+    }
+
+    public void CloseRewardsShop()
+    {
+        if (rewardsShop != null)
+        {
+            rewardsShop.SetActive(false);
+        }
+        OpenMainMenu(); // Reopen the main menu if needed
+        Time.timeScale = 1f; // Resume the game
+        Debug.Log("Rewards Shop Closed");
+    }
+
+    // =======================================
+    // Main Menu Modal Methods
+    // =======================================
+
+    public void OpenMainMenu()
+    {
+        if (mainMenuModal != null)
+        {
+            mainMenuModal.SetActive(true);
+            Time.timeScale = 0f; // Pause the game
+            Debug.Log("Main Menu Opened");
+        }
+        else
+        {
+            Debug.LogError("Main Menu Modal is not assigned!");
+        }
+    }
+
+    public void CloseMainMenu()
+    {
+        if (mainMenuModal != null)
+        {
+            mainMenuModal.SetActive(false);
+            Time.timeScale = 1f; // Resume the game
+            Debug.Log("Main Menu Closed");
+        }
+    }
 }
